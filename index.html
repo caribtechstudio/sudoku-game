@@ -1,419 +1,277 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sudoku — Six modes. Un seul cerveau.</title>
-  <meta name="description" content="Le Sudoku réinventé : Classic, Chrono, Hexadécimal, Honeycomb, Killer et plus encore. Défis quotidiens, streaks, XP. Disponible sur iOS." />
+  <title>Sudoku Prism — Six modes. La logique, sublimée.</title>
+  <meta name="description" data-meta-fr="Six façons de jouer, une grille élégante. Duels 1v1 en temps réel, défi quotidien classé, synchro iCloud. Sans pub, hors ligne. Sur iPhone et iPad." data-meta-en="Six ways to play, one beautiful grid. Real-time 1-on-1 duels, a ranked daily challenge, iCloud sync. Ad-free and offline. For iPhone and iPad." content="Six façons de jouer, une grille élégante. Duels 1v1 en temps réel, défi quotidien classé, synchro iCloud. Sans pub, hors ligne. Sur iPhone et iPad." />
+  <meta name="theme-color" content="#FAF8F3" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#15171A" media="(prefers-color-scheme: dark)" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Sudoku Prism" />
+  <meta property="og:description" content="Six modes. La logique, sublimée. Sur iPhone et iPad." />
+  <meta property="og:type" content="website" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #0d0d0d;
-      --surface:   #141414;
-      --border:    #242424;
-      --yellow:    #e8ff00;
-      --yellow-dim:#b8cc00;
-      --white:     #f0f0f0;
-      --muted:     #666;
-      --font-mono: 'Space Mono', monospace;
-      --font-sans: 'Space Grotesk', sans-serif;
+      /* Paper theme — the app's default identity */
+      --bg:          #FAF8F3;
+      --surface:     #FFFFFF;
+      --surface-2:   #F4F1EA;
+      --border:      #E8E3D7;
+      --border-soft: #EFEBE1;
+      --ink:         #1A1D21;
+      --ink-soft:    #595E66;
+      --ink-faint:   #8C9097;
+      --accent:      #4F46E5;
+      --accent-deep: #4338CA;
+      --accent-soft: rgba(79, 70, 229, 0.07);
+      --shadow:      0 1px 2px rgba(26,29,33,0.04), 0 12px 40px rgba(26,29,33,0.05);
+      --shadow-sm:   0 1px 2px rgba(26,29,33,0.05), 0 4px 16px rgba(26,29,33,0.04);
+
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --maxw: 1080px;
     }
 
-    html { scroll-behavior: smooth; }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        /* Ink theme */
+        --bg:          #15171A;
+        --surface:     #1F2226;
+        --surface-2:   #1A1D21;
+        --border:      #2C3036;
+        --border-soft: #25282D;
+        --ink:         #ECEEF2;
+        --ink-soft:    #A2A8B0;
+        --ink-faint:   #6B7178;
+        --accent:      #818CF8;
+        --accent-deep: #A5B0FF;
+        --accent-soft: rgba(129, 140, 248, 0.12);
+        --shadow:      0 1px 2px rgba(0,0,0,0.3), 0 16px 48px rgba(0,0,0,0.35);
+        --shadow-sm:   0 1px 2px rgba(0,0,0,0.3), 0 6px 20px rgba(0,0,0,0.25);
+      }
+    }
+
+    /* ── Language toggling ── */
+    html[data-lang="fr"] [data-en] { display: none; }
+    html[data-lang="en"] [data-fr] { display: none; }
+
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 
     body {
       background: var(--bg);
-      color: var(--white);
+      color: var(--ink);
       font-family: var(--font-sans);
-      line-height: 1.6;
-      overflow-x: hidden;
+      line-height: 1.65;
+      font-size: 17px;
+      letter-spacing: -0.005em;
     }
+
+    a { color: inherit; }
+
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
 
     /* ── NAV ── */
     nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.2rem 2rem;
-      border-bottom: 1px solid var(--border);
-      background: rgba(13,13,13,0.92);
-      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0; z-index: 100;
+      background: color-mix(in srgb, var(--bg) 82%, transparent);
+      backdrop-filter: saturate(180%) blur(14px);
+      -webkit-backdrop-filter: saturate(180%) blur(14px);
+      border-bottom: 1px solid var(--border-soft);
     }
-    .nav-logo {
-      font-family: var(--font-mono);
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      color: var(--yellow);
-      text-decoration: none;
+    .nav-inner {
+      max-width: var(--maxw); margin: 0 auto; padding: 14px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
     }
-    .nav-cta {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--bg);
-      background: var(--yellow);
-      padding: 0.55rem 1.2rem;
-      text-decoration: none;
-      transition: background 0.15s;
+    .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; }
+    .brand-mark { width: 30px; height: 30px; border-radius: 8px; display: block; box-shadow: var(--shadow-sm); }
+    .brand-name {
+      font-family: var(--font-display);
+      font-weight: 600; font-size: 1.18rem; letter-spacing: -0.01em; color: var(--ink);
     }
-    .nav-cta:hover { background: var(--yellow-dim); }
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .nav-links { display: flex; gap: 4px; margin-right: 8px; }
+    .nav-links a {
+      text-decoration: none; color: var(--ink-soft); font-size: 0.92rem; font-weight: 500;
+      padding: 7px 12px; border-radius: 8px; transition: color .15s, background .15s;
+    }
+    .nav-links a:hover { color: var(--ink); background: var(--surface-2); }
+
+    .lang-toggle {
+      display: inline-flex; border: 1px solid var(--border); border-radius: 9px;
+      overflow: hidden; background: var(--surface);
+    }
+    .lang-toggle button {
+      font-family: var(--font-sans); font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.02em; padding: 6px 11px; border: 0; background: transparent;
+      color: var(--ink-faint); cursor: pointer; transition: color .15s, background .15s;
+    }
+    html[data-lang="fr"] .lang-toggle [data-set="fr"],
+    html[data-lang="en"] .lang-toggle [data-set="en"] { background: var(--accent); color: #fff; }
+
+    .btn {
+      font-family: var(--font-sans); font-weight: 600; font-size: 0.93rem;
+      text-decoration: none; border-radius: 10px; padding: 9px 17px;
+      display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: 1px solid transparent;
+      transition: transform .12s ease, background .15s, border-color .15s, box-shadow .15s;
+      white-space: nowrap;
+    }
+    .btn-primary { background: var(--accent); color: #fff; box-shadow: var(--shadow-sm); }
+    .btn-primary:hover { background: var(--accent-deep); transform: translateY(-1px); }
+    .btn-ghost { background: var(--surface); color: var(--ink); border-color: var(--border); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+    .btn-lg { padding: 13px 24px; font-size: 1rem; border-radius: 12px; }
 
     /* ── HERO ── */
-    .hero {
-      min-height: 100svh;
-      display: flex;
-      align-items: center;
-      padding: 8rem 2rem 4rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Grid background — the signature element */
-    .hero-grid {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.06;
+    .hero { position: relative; overflow: hidden; padding: 96px 0 80px; }
+    .hero-bg {
+      position: absolute; inset: 0; pointer-events: none; z-index: 0;
       background-image:
-        linear-gradient(var(--yellow) 1px, transparent 1px),
-        linear-gradient(90deg, var(--yellow) 1px, transparent 1px);
-      background-size: 60px 60px;
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 56px 56px;
+      -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 32%, #000 0%, transparent 72%);
+      mask-image: radial-gradient(ellipse 75% 65% at 50% 32%, #000 0%, transparent 72%);
+      opacity: 0.5;
     }
-    /* Bold 3×3 borders */
-    .hero-grid::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(var(--yellow) 2px, transparent 2px),
-        linear-gradient(90deg, var(--yellow) 2px, transparent 2px);
-      background-size: 180px 180px;
-      opacity: 0.8;
+    .hero-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.02em; color: var(--accent);
+      background: var(--accent-soft); padding: 6px 13px; border-radius: 999px; margin-bottom: 22px;
     }
+    .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    h1.hero-title {
+      font-family: var(--font-display); font-weight: 500;
+      font-size: clamp(2.6rem, 6vw, 4.4rem); line-height: 1.04; letter-spacing: -0.025em;
+      margin-bottom: 22px;
+    }
+    h1.hero-title em { font-style: italic; color: var(--accent); font-weight: 500; }
+    .hero-sub { font-size: 1.16rem; color: var(--ink-soft); max-width: 480px; margin-bottom: 34px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero-note { margin-top: 18px; font-size: 0.86rem; color: var(--ink-faint); }
 
-    .hero-inner {
-      position: relative;
-      max-width: 860px;
-      margin: 0 auto;
+    /* Hero grid illustration */
+    .hero-art { display: flex; justify-content: center; }
+    .grid-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 22px;
+      padding: 26px; box-shadow: var(--shadow); width: 100%; max-width: 360px;
     }
-    .hero-eyebrow {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--yellow);
-      margin-bottom: 1.5rem;
+    .sudoku-grid { width: 100%; aspect-ratio: 1; display: block; }
+    .grid-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; }
+    .grid-meta .chip {
+      font-size: 0.74rem; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase;
+      color: var(--ink-faint);
     }
-    .hero-title {
-      font-family: var(--font-mono);
-      font-size: clamp(2.8rem, 8vw, 6.5rem);
-      font-weight: 700;
-      line-height: 1.0;
-      letter-spacing: -0.02em;
-      margin-bottom: 1.5rem;
-    }
-    .hero-title span { color: var(--yellow); }
-    .hero-sub {
-      font-size: 1.15rem;
-      color: #aaa;
-      max-width: 520px;
-      margin-bottom: 3rem;
-      line-height: 1.7;
-    }
-    .hero-actions {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .btn-primary {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--bg);
-      background: var(--yellow);
-      padding: 1rem 2rem;
-      text-decoration: none;
-      display: inline-block;
-      transition: background 0.15s, transform 0.1s;
-    }
-    .btn-primary:hover { background: var(--yellow-dim); transform: translateY(-2px); }
-    .btn-secondary {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--white);
-      border: 1px solid var(--border);
-      padding: 1rem 2rem;
-      text-decoration: none;
-      display: inline-block;
-      transition: border-color 0.15s, transform 0.1s;
-    }
-    .btn-secondary:hover { border-color: var(--yellow); color: var(--yellow); transform: translateY(-2px); }
+    .grid-meta .timer { font-family: var(--font-display); font-weight: 500; font-size: 1.1rem; color: var(--ink); }
 
-    /* ── STATS BAR ── */
-    .stats-bar {
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 1.8rem 2rem;
-      display: flex;
-      justify-content: center;
-      gap: 4rem;
-      flex-wrap: wrap;
-      background: var(--surface);
+    /* ── STATS ── */
+    .stats { border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); background: var(--surface); }
+    .stats-inner {
+      max-width: var(--maxw); margin: 0 auto; padding: 30px 24px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
     }
     .stat { text-align: center; }
-    .stat-num {
-      font-family: var(--font-mono);
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--yellow);
-      display: block;
-    }
-    .stat-label {
-      font-size: 0.72rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
+    .stat-num { font-family: var(--font-display); font-weight: 500; font-size: 2.1rem; color: var(--ink); line-height: 1; display: block; }
+    .stat-label { font-size: 0.8rem; color: var(--ink-faint); margin-top: 8px; }
 
-    /* ── MODES ── */
-    .section {
-      padding: 6rem 2rem;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    .section-eyebrow {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--yellow);
-      margin-bottom: 0.8rem;
-    }
-    .section-title {
-      font-family: var(--font-mono);
-      font-size: clamp(1.6rem, 4vw, 2.8rem);
-      font-weight: 700;
-      margin-bottom: 3rem;
-      line-height: 1.15;
-    }
+    /* ── SECTIONS ── */
+    section.block { padding: 92px 0; }
+    .section-head { max-width: 600px; margin-bottom: 48px; }
+    .section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+    .section-eyebrow { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+    h2.section-title { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.9rem, 3.6vw, 2.7rem); line-height: 1.12; letter-spacing: -0.02em; }
+    .section-lead { font-size: 1.08rem; color: var(--ink-soft); margin-top: 16px; }
 
-    .modes-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-    }
+    /* Modes */
+    .modes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
     .mode-card {
-      background: var(--surface);
-      padding: 2rem;
-      transition: background 0.15s;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      padding: 26px; transition: transform .15s, box-shadow .2s, border-color .2s;
     }
-    .mode-card:hover { background: #1a1a1a; }
-    .mode-tag {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--yellow);
-      margin-bottom: 0.8rem;
-      display: block;
-    }
-    .mode-name {
-      font-family: var(--font-mono);
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 0.6rem;
-    }
-    .mode-desc {
-      font-size: 0.875rem;
-      color: #888;
-      line-height: 1.65;
-    }
+    .mode-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--accent) 35%, var(--border)); }
+    .mode-ico { width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+    .mode-ico svg { width: 20px; height: 20px; stroke: var(--accent); fill: none; stroke-width: 1.8; }
+    .mode-name { font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .mode-desc { font-size: 0.95rem; color: var(--ink-soft); }
 
-    /* ── FEATURES ── */
-    .features-section {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+    /* Split feature (duel + daily) */
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .panel {
+      border-radius: 20px; padding: 40px; border: 1px solid var(--border);
+      background: var(--surface); box-shadow: var(--shadow-sm);
     }
-    .features-inner {
-      padding: 6rem 2rem;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 2.5rem;
-      margin-top: 3rem;
-    }
-    .feature { }
-    .feature-icon {
-      font-size: 1.6rem;
-      margin-bottom: 0.75rem;
-      display: block;
-    }
-    .feature-name {
-      font-family: var(--font-mono);
-      font-size: 0.9rem;
-      font-weight: 700;
-      margin-bottom: 0.4rem;
-    }
-    .feature-desc {
-      font-size: 0.85rem;
-      color: #888;
-      line-height: 1.6;
-    }
+    .panel.accent { background: linear-gradient(160deg, var(--accent) 0%, var(--accent-deep) 100%); color: #fff; border-color: transparent; }
+    .panel.accent .panel-eyebrow, .panel.accent .panel-body { color: rgba(255,255,255,0.82); }
+    .panel-eyebrow { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+    .panel-title { font-family: var(--font-display); font-weight: 500; font-size: 1.6rem; line-height: 1.15; letter-spacing: -0.015em; margin-bottom: 14px; }
+    .panel-body { font-size: 1rem; color: var(--ink-soft); }
 
-    /* ── DAILY CHALLENGE CALLOUT ── */
-    .callout {
-      margin: 0 2rem;
-      border: 1px solid var(--yellow);
-      background: #121200;
-      padding: 3rem;
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-      flex-wrap: wrap;
-    }
-    .callout-left { flex: 1; min-width: 220px; }
-    .callout-label {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--yellow);
-      margin-bottom: 0.6rem;
-    }
-    .callout-title {
-      font-family: var(--font-mono);
-      font-size: 1.6rem;
-      font-weight: 700;
-      line-height: 1.2;
-    }
-    .callout-body {
-      font-size: 0.9rem;
-      color: #999;
-      margin-top: 0.75rem;
-      line-height: 1.65;
-    }
+    /* Features */
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px 32px; }
+    .feature-ico { width: 42px; height: 42px; border-radius: 11px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+    .feature-ico svg { width: 22px; height: 22px; stroke: var(--accent); fill: none; stroke-width: 1.7; }
+    .feature-name { font-weight: 600; font-size: 1.05rem; margin-bottom: 6px; }
+    .feature-desc { font-size: 0.95rem; color: var(--ink-soft); }
 
-    /* ── UNLOCK / PRICING ── */
-    .unlock-section {
-      padding: 6rem 2rem;
-      max-width: 760px;
-      margin: 0 auto;
-      text-align: center;
+    /* Pricing */
+    .price-wrap { max-width: 460px; margin: 0 auto; }
+    .price-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 22px;
+      padding: 44px 40px; text-align: center; box-shadow: var(--shadow);
     }
-    .unlock-box {
-      border: 1px solid var(--border);
-      padding: 3rem 2.5rem;
-      background: var(--surface);
-    }
-    .unlock-price {
-      font-family: var(--font-mono);
-      font-size: 3.5rem;
-      font-weight: 700;
-      color: var(--yellow);
-      line-height: 1;
-      margin: 1rem 0 0.25rem;
-    }
-    .unlock-sub {
-      font-size: 0.82rem;
-      color: var(--muted);
-      margin-bottom: 2rem;
-    }
-    .unlock-list {
-      list-style: none;
-      text-align: left;
-      margin-bottom: 2rem;
-    }
-    .unlock-list li {
-      font-size: 0.9rem;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .unlock-list li::before {
-      content: '→';
-      color: var(--yellow);
-      font-family: var(--font-mono);
-    }
+    .price-badge { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); }
+    .price-amount { font-family: var(--font-display); font-weight: 500; font-size: 3.4rem; line-height: 1; margin: 14px 0 6px; }
+    .price-sub { font-size: 0.92rem; color: var(--ink-faint); margin-bottom: 28px; }
+    .price-list { list-style: none; text-align: left; margin-bottom: 30px; }
+    .price-list li { display: flex; align-items: flex-start; gap: 11px; padding: 9px 0; font-size: 0.97rem; border-bottom: 1px solid var(--border-soft); color: var(--ink-soft); }
+    .price-list li:last-child { border-bottom: 0; }
+    .price-list svg { width: 18px; height: 18px; stroke: var(--accent); fill: none; stroke-width: 2; flex-shrink: 0; margin-top: 3px; }
 
     /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .footer-logo {
-      font-family: var(--font-mono);
-      font-size: 0.9rem;
-      color: var(--yellow);
-    }
-    .footer-links {
-      display: flex;
-      gap: 1.5rem;
-    }
-    .footer-links a {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.15s;
-    }
-    .footer-links a:hover { color: var(--yellow); }
-    .footer-copy {
-      font-size: 0.75rem;
-      color: var(--muted);
-      width: 100%;
-      text-align: center;
-      margin-top: 0.5rem;
-    }
+    footer { border-top: 1px solid var(--border-soft); background: var(--surface); }
+    .footer-inner { max-width: var(--maxw); margin: 0 auto; padding: 44px 24px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 28px; }
+    .footer-brand { max-width: 280px; }
+    .footer-brand .brand { margin-bottom: 14px; }
+    .footer-tagline { font-size: 0.9rem; color: var(--ink-faint); }
+    .footer-cols { display: flex; gap: 64px; flex-wrap: wrap; }
+    .footer-col h4 { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 14px; }
+    .footer-col a { display: block; text-decoration: none; color: var(--ink-soft); font-size: 0.94rem; padding: 4px 0; transition: color .15s; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-base { border-top: 1px solid var(--border-soft); }
+    .footer-base-inner { max-width: var(--maxw); margin: 0 auto; padding: 20px 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 0.84rem; color: var(--ink-faint); }
 
-    /* ── REVEAL ANIMATION ── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.55s ease, transform 0.55s ease;
-    }
-    .reveal.visible {
-      opacity: 1;
-      transform: none;
-    }
+    /* Reveal */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; } html { scroll-behavior: auto; } }
 
-    @media (prefers-reduced-motion: reduce) {
-      .reveal { opacity: 1; transform: none; }
+    /* Responsive */
+    @media (max-width: 920px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 44px; }
+      .hero-art { order: -1; }
+      .grid-card { max-width: 320px; }
+      .modes-grid, .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .split { grid-template-columns: 1fr; }
     }
-
-    @media (max-width: 600px) {
-      .stats-bar { gap: 2rem; }
-      .callout { padding: 2rem 1.5rem; }
-      nav { padding: 1rem 1.2rem; }
+    @media (max-width: 620px) {
+      body { font-size: 16px; }
+      .nav-links { display: none; }
+      .hero { padding: 64px 0 56px; }
+      section.block { padding: 64px 0; }
+      .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 28px 16px; }
+      .modes-grid, .features-grid { grid-template-columns: 1fr; }
+      .panel { padding: 30px; }
+      .footer-cols { gap: 40px; }
     }
   </style>
 </head>
@@ -421,176 +279,322 @@
 
   <!-- NAV -->
   <nav>
-    <a class="nav-logo" href="#">SUDOKU</a>
-    <a class="nav-cta" href="#unlock">Télécharger</a>
-  </nav>
-
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-grid"></div>
-    <div class="hero-inner">
-      <p class="hero-eyebrow">iOS — Défis quotidiens — 6 modes</p>
-      <h1 class="hero-title">Six façons<br>de <span>penser</span><br>autrement.</h1>
-      <p class="hero-sub">
-        Le Sudoku que tu connais, et cinq autres que tu n'as pas encore maîtrisés.
-        Streaks, XP, défis quotidiens — chaque grille compte.
-      </p>
-      <div class="hero-actions">
-        <a class="btn-primary" href="#unlock">Télécharger sur l'App Store</a>
-        <a class="btn-secondary" href="#modes">Voir les modes</a>
+    <div class="nav-inner">
+      <a class="brand" href="#top" aria-label="Sudoku Prism">
+        <svg class="brand-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+          <rect width="100" height="100" rx="22" fill="#4F46E5"/>
+          <g stroke="#fff" stroke-width="4" opacity="0.9">
+            <line x1="36" y1="20" x2="36" y2="80"/><line x1="64" y1="20" x2="64" y2="80"/>
+            <line x1="20" y1="36" x2="80" y2="36"/><line x1="20" y1="64" x2="80" y2="64"/>
+          </g>
+          <rect x="20" y="20" width="60" height="60" rx="6" fill="none" stroke="#fff" stroke-width="5"/>
+          <circle cx="50" cy="50" r="7" fill="#fff"/>
+        </svg>
+        <span class="brand-name">Sudoku Prism</span>
+      </a>
+      <div class="nav-right">
+        <div class="nav-links">
+          <a href="#modes"><span data-fr>Modes</span><span data-en>Modes</span></a>
+          <a href="#features"><span data-fr>Fonctionnalités</span><span data-en>Features</span></a>
+          <a href="#pricing"><span data-fr>Prix</span><span data-en>Pricing</span></a>
+        </div>
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button data-set="fr" onclick="setLang('fr')">FR</button>
+          <button data-set="en" onclick="setLang('en')">EN</button>
+        </div>
+        <a class="btn btn-primary" href="#pricing">
+          <span data-fr>Télécharger</span><span data-en>Download</span>
+        </a>
       </div>
     </div>
-  </section>
+  </nav>
+
+  <span id="top"></span>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <div class="wrap hero-inner">
+      <div>
+        <span class="eyebrow">
+          <span class="dot"></span>
+          <span data-fr>iOS · iPhone &amp; iPad</span><span data-en>iOS · iPhone &amp; iPad</span>
+        </span>
+        <h1 class="hero-title">
+          <span data-fr>Six modes.<br>La logique,<br><em>sublimée.</em></span>
+          <span data-en>Six modes.<br>Logic,<br><em>refined.</em></span>
+        </h1>
+        <p class="hero-sub">
+          <span data-fr>Le Sudoku pour celles et ceux qui aiment vraiment ce jeu — et le veulent bien fait. Duels 1v1 en temps réel, défi quotidien classé, et une interface sobre qui s'efface devant le plaisir de jouer.</span>
+          <span data-en>The Sudoku app for people who love the puzzle — and expect it done right. Real-time 1-on-1 duels, a ranked daily challenge, and a calm interface that gets out of your way.</span>
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="#pricing">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.5 1.6c.1 1.2-.4 2.4-1.1 3.3-.8.9-2 1.6-3.2 1.5-.1-1.2.4-2.4 1.1-3.2.8-.9 2-1.5 3.2-1.6zM20 17c-.5 1.2-.8 1.7-1.5 2.7-1 1.5-2.4 3.3-4.1 3.3-1.5 0-1.9-1-4-1-2 0-2.5 1-4 1-1.7 0-3-1.7-4-3.1C-.4 16.7-.7 11.4 1.6 8.6 2.8 7.2 4.4 6.3 6.1 6.3c1.7 0 2.8 1 4.2 1 1.4 0 2.2-1 4.2-1 1.5 0 3.1.8 4.2 2.2-3.7 2-3.1 7.3.3 8.5z"/></svg>
+            <span data-fr>App Store</span><span data-en>App Store</span>
+          </a>
+          <a class="btn btn-ghost btn-lg" href="#modes">
+            <span data-fr>Découvrir les modes</span><span data-en>Explore the modes</span>
+          </a>
+        </div>
+        <p class="hero-note">
+          <span data-fr>Achat unique · Sans pub · Sans pistage · Hors ligne</span>
+          <span data-en>One-time purchase · No ads · No tracking · Offline</span>
+        </p>
+      </div>
+
+      <!-- Hero illustration: a tasteful mini sudoku -->
+      <div class="hero-art">
+        <div class="grid-card">
+          <svg class="sudoku-grid" viewBox="0 0 270 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sudoku grid">
+            <rect x="0" y="0" width="270" height="270" rx="10" fill="var(--surface-2)"/>
+            <g stroke="var(--border)" stroke-width="1">
+              <line x1="30" y1="0" x2="30" y2="270"/><line x1="60" y1="0" x2="60" y2="270"/>
+              <line x1="120" y1="0" x2="120" y2="270"/><line x1="150" y1="0" x2="150" y2="270"/>
+              <line x1="210" y1="0" x2="210" y2="270"/><line x1="240" y1="0" x2="240" y2="270"/>
+              <line x1="0" y1="30" x2="270" y2="30"/><line x1="0" y1="60" x2="270" y2="60"/>
+              <line x1="0" y1="120" x2="270" y2="120"/><line x1="0" y1="150" x2="270" y2="150"/>
+              <line x1="0" y1="210" x2="270" y2="210"/><line x1="0" y1="240" x2="270" y2="240"/>
+            </g>
+            <g stroke="var(--ink-faint)" stroke-width="2" opacity="0.5">
+              <line x1="90" y1="0" x2="90" y2="270"/><line x1="180" y1="0" x2="180" y2="270"/>
+              <line x1="0" y1="90" x2="270" y2="90"/><line x1="0" y1="180" x2="270" y2="180"/>
+            </g>
+            <g font-family="Fraunces, Georgia, serif" font-size="18" text-anchor="middle" dominant-baseline="central">
+              <!-- givens (ink) -->
+              <text x="15" y="16" fill="var(--ink)">5</text>
+              <text x="75" y="16" fill="var(--ink)">3</text>
+              <text x="195" y="16" fill="var(--ink)">7</text>
+              <text x="15" y="46" fill="var(--ink)">6</text>
+              <text x="105" y="46" fill="var(--ink)">1</text>
+              <text x="135" y="46" fill="var(--ink)">9</text>
+              <text x="165" y="46" fill="var(--ink)">5</text>
+              <text x="45" y="76" fill="var(--ink)">9</text>
+              <text x="75" y="76" fill="var(--ink)">8</text>
+              <text x="225" y="76" fill="var(--ink)">6</text>
+              <text x="135" y="135" fill="var(--ink)">8</text>
+              <text x="255" y="135" fill="var(--ink)">3</text>
+              <text x="15" y="225" fill="var(--ink)">2</text>
+              <text x="195" y="255" fill="var(--ink)">9</text>
+              <text x="255" y="255" fill="var(--ink)">7</text>
+              <!-- player entries (accent) -->
+              <text x="135" y="16" fill="var(--accent)" font-weight="500">6</text>
+              <text x="45" y="135" fill="var(--accent)" font-weight="500">4</text>
+              <text x="105" y="195" fill="var(--accent)" font-weight="500">3</text>
+              <text x="225" y="195" fill="var(--accent)" font-weight="500">1</text>
+            </g>
+            <!-- selected cell -->
+            <rect x="91" y="121" width="28" height="28" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2" rx="3"/>
+          </svg>
+          <div class="grid-meta">
+            <span class="chip"><span data-fr>Difficile</span><span data-en>Hard</span></span>
+            <span class="timer">04:12</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
 
   <!-- STATS -->
-  <div class="stats-bar">
-    <div class="stat">
-      <span class="stat-num">6</span>
-      <span class="stat-label">Modes de jeu</span>
-    </div>
-    <div class="stat">
-      <span class="stat-num">5</span>
-      <span class="stat-label">Niveaux de difficulté</span>
-    </div>
-    <div class="stat">
-      <span class="stat-num">∞</span>
-      <span class="stat-label">Grilles générées</span>
-    </div>
-    <div class="stat">
-      <span class="stat-num">1</span>
-      <span class="stat-label">Défi par jour</span>
+  <div class="stats">
+    <div class="stats-inner">
+      <div class="stat reveal"><span class="stat-num">6</span><span class="stat-label"><span data-fr>Modes de jeu</span><span data-en>Game modes</span></span></div>
+      <div class="stat reveal"><span class="stat-num">3</span><span class="stat-label"><span data-fr>Niveaux de difficulté</span><span data-en>Difficulty levels</span></span></div>
+      <div class="stat reveal"><span class="stat-num">35</span><span class="stat-label"><span data-fr>Succès à débloquer</span><span data-en>Achievements</span></span></div>
+      <div class="stat reveal"><span class="stat-num">∞</span><span class="stat-label"><span data-fr>Grilles générées</span><span data-en>Generated puzzles</span></span></div>
     </div>
   </div>
 
   <!-- MODES -->
-  <section class="section" id="modes">
-    <p class="section-eyebrow reveal">Modes de jeu</p>
-    <h2 class="section-title reveal">Une grille,<br>six dimensions.</h2>
-    <div class="modes-grid reveal">
-      <div class="mode-card">
-        <span class="mode-tag">Mode 01</span>
-        <div class="mode-name">Classic</div>
-        <p class="mode-desc">Le Sudoku originel. Neuf chiffres, neuf régions, zéro compromis. Pour entrer dans la zone.</p>
+  <section class="block" id="modes">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="section-eyebrow"><span data-fr>Modes de jeu</span><span data-en>Game modes</span></p>
+        <h2 class="section-title"><span data-fr>Une grille,<br>six façons de penser.</span><span data-en>One grid,<br>six ways to think.</span></h2>
+        <p class="section-lead"><span data-fr>Chaque grille a une solution unique — calibrée par un vrai moteur d'évaluation de difficulté, jamais par un retrait de chiffres au hasard.</span><span data-en>Every puzzle has exactly one solution — tuned by a real difficulty-rating engine, never by random clue removal.</span></p>
       </div>
-      <div class="mode-card">
-        <span class="mode-tag">Mode 02</span>
-        <div class="mode-name">Chrono</div>
-        <p class="mode-desc">Chaque seconde compte. Résous la grille le plus vite possible et grimpe dans les classements.</p>
-      </div>
-      <div class="mode-card">
-        <span class="mode-tag">Mode 03</span>
-        <div class="mode-name">Pénalités</div>
-        <p class="mode-desc">Chaque erreur te coûte du temps. La précision prime sur la vitesse — pense avant de jouer.</p>
-      </div>
-      <div class="mode-card">
-        <span class="mode-tag">Mode 04</span>
-        <div class="mode-name">Hexadécimal</div>
-        <p class="mode-desc">16 symboles. Une grille 16×16. Réservé à ceux qui veulent vraiment souffrir.</p>
-      </div>
-      <div class="mode-card">
-        <span class="mode-tag">Mode 05</span>
-        <div class="mode-name">Honeycomb</div>
-        <p class="mode-desc">La grille carrée cède la place aux hexagones. De nouvelles règles, de nouvelles stratégies.</p>
-      </div>
-      <div class="mode-card">
-        <span class="mode-tag">Mode 06</span>
-        <div class="mode-name">Killer</div>
-        <p class="mode-desc">Les chiffres disparaissent, les sommes apparaissent. Logique et arithmétique fusionnent.</p>
+
+      <div class="modes-grid reveal">
+        <div class="mode-card">
+          <div class="mode-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></div>
+          <div class="mode-name">Classic</div>
+          <p class="mode-desc"><span data-fr>Le sudoku tel qu'il doit être, à votre rythme. Pour entrer dans la zone.</span><span data-en>Sudoku as it should be, at your own pace. The pure way in.</span></p>
+        </div>
+        <div class="mode-card">
+          <div class="mode-ico"><svg viewBox="0 0 24 24"><path d="M3 7h7l2 3M3 7v10h18V10h-9M3 7l2-3h5l2 3"/></svg></div>
+          <div class="mode-name">Killer</div>
+          <p class="mode-desc"><span data-fr>Pas un seul chiffre donné. Uniquement des cages et leurs sommes. Pour les plus malins.</span><span data-en>No givens at all. Only cages and their sums. For the cunning.</span></p>
+        </div>
+        <div class="mode-card">
+          <div class="mode-ico"><svg viewBox="0 0 24 24"><path d="M5 4h14M5 20h14M7 4l4 8-4 8M17 4l-4 8 4 8"/></svg></div>
+          <div class="mode-name"><span data-fr>Hexadécimal</span><span data-en>Hexadecimal</span></div>
+          <p class="mode-desc"><span data-fr>Une grille 16×16 avec les chiffres de 0 à F. Le défi logique ultime.</span><span data-en>A 16×16 grid with digits 0 to F. The ultimate logic challenge.</span></p>
+        </div>
+        <div class="mode-card">
+          <div class="mode-ico"><svg viewBox="0 0 24 24"><path d="M12 2l8 4.5v9L12 20l-8-4.5v-9L12 2z"/></svg></div>
+          <div class="mode-name"><span data-fr>Nid d'abeille</span><span data-en>Honeycomb</span></div>
+          <p class="mode-desc"><span data-fr>Une grille hexagonale à trois axes d'unicité. De la logique pure et élégante.</span><span data-en>A hexagonal grid with three axes of uniqueness. Pure, beautiful logic.</span></p>
+        </div>
+        <div class="mode-card">
+          <div class="mode-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 13V9M12 1h0M9 1h6"/></svg></div>
+          <div class="mode-name"><span data-fr>Contre la montre</span><span data-en>Time Attack</span></div>
+          <p class="mode-desc"><span data-fr>Terminez la grille avant la fin du chrono. Chaque seconde compte.</span><span data-en>Solve the grid before the clock runs out. Every second counts.</span></p>
+        </div>
+        <div class="mode-card">
+          <div class="mode-ico"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.3-9.3-9.2C1 8.5 2.7 5 6 5c2 0 3.2 1.2 4 2.5C10.8 6.2 12 5 14 5c3.3 0 5 3.5 3.3 6.8C19 16.7 12 21 12 21z"/></svg></div>
+          <div class="mode-name"><span data-fr>Survie</span><span data-en>Survival</span></div>
+          <p class="mode-desc"><span data-fr>Chaque bon chiffre recharge votre temps. Ne le laissez jamais atteindre zéro.</span><span data-en>Every correct digit refills your timer. Don't let it hit zero.</span></p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- DAILY CHALLENGE -->
-  <div class="callout reveal">
-    <div class="callout-left">
-      <p class="callout-label">Chaque jour</p>
-      <h3 class="callout-title">Le défi du jour<br>t'attend.</h3>
-      <p class="callout-body">Une grille unique, générée chaque matin. Résous-la pour maintenir ton streak et gagner des XP bonus. Reviens demain.</p>
+  <!-- DUEL + DAILY -->
+  <section class="block" style="padding-top:0;">
+    <div class="wrap">
+      <div class="split">
+        <div class="panel accent reveal">
+          <p class="panel-eyebrow" style="color:rgba(255,255,255,0.78);"><span data-fr>Multijoueur</span><span data-en>Multiplayer</span></p>
+          <h3 class="panel-title"><span data-fr>Affrontez un ami,<br>en 1 contre 1.</span><span data-en>Duel a friend,<br>1-on-1.</span></h3>
+          <p class="panel-body"><span data-fr>Course en tête-à-tête sur exactement la même grille. En ligne via Game Center ou en local par Wi-Fi/Bluetooth — sans connexion internet. Grimpez au classement Elo et prouvez qui est le plus rapide.</span><span data-en>Race head-to-head on the exact same grid. Online via Game Center or locally over Wi-Fi/Bluetooth — no internet required. Climb the Elo ladder and prove who's faster.</span></p>
+        </div>
+        <div class="panel reveal">
+          <p class="panel-eyebrow"><span data-fr>Chaque jour</span><span data-en>Every day</span></p>
+          <h3 class="panel-title"><span data-fr>Le défi quotidien<br>vous attend.</span><span data-en>The daily challenge<br>awaits.</span></h3>
+          <p class="panel-body"><span data-fr>Une nouvelle grille chaque jour, la même pour tous. Mesurez-vous au classement mondial Game Center et faites grandir votre série.</span><span data-en>A fresh puzzle every day, the same for everyone. Compete on the global Game Center leaderboard and build your solving streak.</span></p>
+        </div>
+      </div>
     </div>
-    <a class="btn-primary" href="#unlock" style="white-space:nowrap;">Rejoindre →</a>
-  </div>
+  </section>
 
   <!-- FEATURES -->
-  <section class="features-section">
-    <div class="features-inner">
-      <p class="section-eyebrow reveal">Fonctionnalités</p>
-      <h2 class="section-title reveal">Conçu pour<br>progresser.</h2>
+  <section class="block" id="features" style="background:var(--surface); border-top:1px solid var(--border-soft); border-bottom:1px solid var(--border-soft);">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <p class="section-eyebrow"><span data-fr>Conçu pour progresser</span><span data-en>Built to master the game</span></p>
+        <h2 class="section-title"><span data-fr>Tout ce qu'il faut,<br>rien de superflu.</span><span data-en>Everything you need,<br>nothing you don't.</span></h2>
+      </div>
       <div class="features-grid reveal">
         <div class="feature">
-          <span class="feature-icon">🔥</span>
-          <div class="feature-name">Streaks & XP</div>
-          <p class="feature-desc">Joue chaque jour pour maintenir ta série. L'XP déverrouille les modes avancés.</p>
+          <div class="feature-ico"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.2V16h6v-.3c0-.8.4-1.6 1-2.2A6 6 0 0 0 12 3z"/></svg></div>
+          <div class="feature-name"><span data-fr>Indices intelligents</span><span data-en>Smart hints</span></div>
+          <p class="feature-desc"><span data-fr>Des indices qui vous enseignent la technique derrière chaque coup, pas seulement la réponse.</span><span data-en>Hints that teach you the technique behind the move, not just the answer.</span></p>
         </div>
         <div class="feature">
-          <span class="feature-icon">🏆</span>
-          <div class="feature-name">Système de niveaux</div>
-          <p class="feature-desc">Facile, Moyen, Difficile, Expert, Maître. Progresse à ton rythme.</p>
+          <div class="feature-ico"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16M8 16v-4M12 16V8M16 16v-7"/></svg></div>
+          <div class="feature-name"><span data-fr>Statistiques complètes</span><span data-en>Full statistics</span></div>
+          <p class="feature-desc"><span data-fr>Taux de victoire, meilleurs temps, carte de régularité et tendances.</span><span data-en>Win rate, best times, a solving heatmap and trends.</span></p>
         </div>
         <div class="feature">
-          <span class="feature-icon">🎯</span>
-          <div class="feature-name">Grilles illimitées</div>
-          <p class="feature-desc">Chaque partie est générée à la volée. Pas de répétition, pas de lassitude.</p>
+          <div class="feature-ico"><svg viewBox="0 0 24 24"><path d="M18 10c0-4-3-7-6-7s-6 3-6 7c0 2-.6 3.3-1.3 4.2-.4.5 0 1.3.6 1.3h13.4c.6 0 1-.8.6-1.3C18.6 13.3 18 12 18 10z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg></div>
+          <div class="feature-name"><span data-fr>35 succès</span><span data-en>35 achievements</span></div>
+          <p class="feature-desc"><span data-fr>Des objectifs à débloquer qui récompensent la régularité comme la virtuosité.</span><span data-en>Goals to chase that reward consistency as much as brilliance.</span></p>
         </div>
         <div class="feature">
-          <span class="feature-icon">📵</span>
-          <div class="feature-name">100% hors-ligne</div>
-          <p class="feature-desc">Joue dans le métro, en avion, partout. Aucune connexion requise.</p>
+          <div class="feature-ico"><svg viewBox="0 0 24 24"><path d="M18 10h1a4 4 0 0 1 0 8H6a5 5 0 0 1-1-9.9A6 6 0 0 1 17 8M12 18v-7M9 14l3-3 3 3"/></svg></div>
+          <div class="feature-name"><span data-fr>Synchro iCloud</span><span data-en>iCloud sync</span></div>
+          <p class="feature-desc"><span data-fr>Progression, stats et séries conservées entre iPhone et iPad, en privé.</span><span data-en>Progress, stats and streaks kept in sync across iPhone and iPad, privately.</span></p>
         </div>
         <div class="feature">
-          <span class="feature-icon">🌙</span>
-          <div class="feature-name">Dark mode natif</div>
-          <p class="feature-desc">Interface sombre, design minimaliste. Conçu pour les longues sessions.</p>
+          <div class="feature-ico"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg></div>
+          <div class="feature-name"><span data-fr>Impression PDF</span><span data-en>Print to PDF</span></div>
+          <p class="feature-desc"><span data-fr>Imprimez n'importe quelle grille — avec un code pour la reprendre plus tard.</span><span data-en>Print any puzzle — with a recovery code to resume it later on your device.</span></p>
         </div>
         <div class="feature">
-          <span class="feature-icon">⚡</span>
-          <div class="feature-name">Fluide & natif</div>
-          <p class="feature-desc">Développé en SwiftUI. Rapide, précis, fidèle aux guidelines Apple.</p>
+          <div class="feature-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z"/></svg></div>
+          <div class="feature-name"><span data-fr>Trois thèmes élégants</span><span data-en>Three elegant themes</span></div>
+          <p class="feature-desc"><span data-fr>Papier, Encre et Sépia. Vibrations et sons raffinés, désactivables à tout moment.</span><span data-en>Paper, Ink and Sepia. Refined haptics and sound you can turn off anytime.</span></p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- UNLOCK -->
-  <section class="unlock-section" id="unlock">
-    <p class="section-eyebrow reveal">Débloquer</p>
-    <h2 class="section-title reveal">Accès complet.<br>Une seule fois.</h2>
-    <div class="unlock-box reveal">
-      <p style="font-size:0.8rem;color:var(--muted);font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;">Achat unique</p>
-      <div class="unlock-price">2,99 $</div>
-      <p class="unlock-sub">Paiement unique — aucun abonnement</p>
-      <ul class="unlock-list">
-        <li>Tous les modes de jeu débloqués</li>
-        <li>Défis quotidiens sans limite</li>
-        <li>Statistiques avancées</li>
-        <li>Mises à jour futures incluses</li>
-        <li>Aucune publicité, jamais</li>
-      </ul>
-      <a class="btn-primary" href="#" style="width:100%;text-align:center;display:block;">
-        Télécharger sur l'App Store
-      </a>
+  <!-- PRICING -->
+  <section class="block" id="pricing">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <p class="section-eyebrow"><span data-fr>Tarif</span><span data-en>Pricing</span></p>
+        <h2 class="section-title"><span data-fr>Tout débloqué.<br>Une seule fois.</span><span data-en>Fully unlocked.<br>Pay once.</span></h2>
+      </div>
+      <div class="price-wrap reveal">
+        <div class="price-card">
+          <p class="price-badge"><span data-fr>Achat unique · sans abonnement</span><span data-en>One-time purchase · no subscription</span></p>
+          <div class="price-amount"><span data-fr>3,99 €</span><span data-en>$3.99</span></div>
+          <p class="price-sub"><span data-fr>Aucun achat intégré, jamais</span><span data-en>No in-app purchases, ever</span></p>
+          <ul class="price-list">
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span><span data-fr>Les six modes de jeu, sans restriction</span><span data-en>All six game modes, unrestricted</span></span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span><span data-fr>Duels 1v1 et défi quotidien classé</span><span data-en>1-on-1 duels and the ranked daily challenge</span></span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span><span data-fr>Synchro iCloud, statistiques et 35 succès</span><span data-en>iCloud sync, full statistics and 35 achievements</span></span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span><span data-fr>Mises à jour futures incluses</span><span data-en>Future updates included</span></span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span><span data-fr>Aucune publicité, aucun pistage</span><span data-en>No ads, no tracking</span></span></li>
+          </ul>
+          <a class="btn btn-primary btn-lg" href="#" style="width:100%; justify-content:center;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.5 1.6c.1 1.2-.4 2.4-1.1 3.3-.8.9-2 1.6-3.2 1.5-.1-1.2.4-2.4 1.1-3.2.8-.9 2-1.5 3.2-1.6zM20 17c-.5 1.2-.8 1.7-1.5 2.7-1 1.5-2.4 3.3-4.1 3.3-1.5 0-1.9-1-4-1-2 0-2.5 1-4 1-1.7 0-3-1.7-4-3.1C-.4 16.7-.7 11.4 1.6 8.6 2.8 7.2 4.4 6.3 6.1 6.3c1.7 0 2.8 1 4.2 1 1.4 0 2.2-1 4.2-1 1.5 0 3.1.8 4.2 2.2-3.7 2-3.1 7.3.3 8.5z"/></svg>
+            <span data-fr>Télécharger sur l'App Store</span><span data-en>Download on the App Store</span>
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- FOOTER -->
   <footer>
-    <span class="footer-logo">SUDOKU</span>
-    <div class="footer-links">
-      <a href="#">Politique de confidentialité</a>
-      <a href="#">Support</a>
-      <a href="mailto:contact@example.com">Contact</a>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a class="brand" href="#top">
+          <svg class="brand-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="100" height="100" rx="22" fill="#4F46E5"/>
+            <g stroke="#fff" stroke-width="4" opacity="0.9"><line x1="36" y1="20" x2="36" y2="80"/><line x1="64" y1="20" x2="64" y2="80"/><line x1="20" y1="36" x2="80" y2="36"/><line x1="20" y1="64" x2="80" y2="64"/></g>
+            <rect x="20" y="20" width="60" height="60" rx="6" fill="none" stroke="#fff" stroke-width="5"/>
+            <circle cx="50" cy="50" r="7" fill="#fff"/>
+          </svg>
+          <span class="brand-name">Sudoku Prism</span>
+        </a>
+        <p class="footer-tagline"><span data-fr>Le Sudoku réinventé, fait avec soin sur iOS.</span><span data-en>Sudoku reimagined, crafted with care on iOS.</span></p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4><span data-fr>Produit</span><span data-en>Product</span></h4>
+          <a href="#modes"><span data-fr>Modes de jeu</span><span data-en>Game modes</span></a>
+          <a href="#features"><span data-fr>Fonctionnalités</span><span data-en>Features</span></a>
+          <a href="#pricing"><span data-fr>Prix</span><span data-en>Pricing</span></a>
+        </div>
+        <div class="footer-col">
+          <h4><span data-fr>Entreprise</span><span data-en>Company</span></h4>
+          <a href="privacy.html"><span data-fr>Confidentialité</span><span data-en>Privacy</span></a>
+          <a href="mailto:support@caribtech.studio"><span data-fr>Assistance</span><span data-en>Support</span></a>
+          <a href="mailto:support@caribtech.studio">Contact</a>
+        </div>
+      </div>
     </div>
-    <p class="footer-copy">© 2026 — Fait avec rigueur sur iOS.</p>
+    <div class="footer-base">
+      <div class="footer-base-inner">
+        <span>© 2026 Carib Tech Studio</span>
+        <span><span data-fr>Conçu et développé en SwiftUI.</span><span data-en>Designed and built in SwiftUI.</span></span>
+      </div>
+    </div>
   </footer>
 
   <script>
-    // Scroll reveal
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('visible'); }
-      });
-    }, { threshold: 0.12 });
+    function setLang(lang) {
+      document.documentElement.setAttribute('data-lang', lang);
+      document.documentElement.setAttribute('lang', lang);
+      try { localStorage.setItem('sp-lang', lang); } catch (e) {}
+      var meta = document.querySelector('meta[name="description"]');
+      if (meta) meta.setAttribute('content', meta.getAttribute('data-meta-' + lang) || meta.content);
+    }
+    (function () {
+      var saved;
+      try { saved = localStorage.getItem('sp-lang'); } catch (e) {}
+      var lang = saved || ((navigator.language || 'fr').toLowerCase().startsWith('fr') ? 'fr' : 'en');
+      setLang(lang);
+    })();
 
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    // Scroll reveal
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
   </script>
 </body>
 </html>
