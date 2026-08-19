@@ -111,9 +111,13 @@
   }
   .gallery-scroll::-webkit-scrollbar { height: 6px; }
   .gallery-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+  .gallery-scroll figure { margin: 0; flex: 0 0 auto; scroll-snap-align: start; text-align: center; }
   .gallery-scroll img {
-    height: 420px; width: auto; border-radius: 22px; border: 1px solid var(--border);
-    box-shadow: var(--card-shadow); scroll-snap-align: start; flex: 0 0 auto; background: var(--surface);
+    display: block; height: 420px; width: auto; border-radius: 22px; border: 1px solid var(--border);
+    box-shadow: var(--card-shadow); background: var(--surface);
+  }
+  .gallery-scroll figcaption {
+    margin-top: .65rem; font-size: .85rem; font-weight: 600; color: var(--ink-soft);
   }
   @media (max-width: 640px) { .gallery-scroll img { height: 320px; } }
 
@@ -124,12 +128,29 @@
     color: var(--ink-soft); margin-bottom: 1rem;
   }
 
-  footer { border-top: 1px solid var(--border); padding: 2.5rem 0 3rem; }
-  .footer-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2rem; }
-  .footer-col h4 { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-soft); margin: 0 0 .8rem; }
-  .footer-col a { display: block; color: var(--ink); text-decoration: none; font-size: .92rem; margin-bottom: .55rem; }
+  footer {
+    background: var(--surface); border-top: 1px solid var(--border);
+    padding: 3.5rem 0 2.5rem; position: relative; overflow: hidden;
+  }
+  footer::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--brass), var(--accent));
+    opacity: .7;
+  }
+  .footer-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 3rem; }
+  .footer-brand { max-width: 280px; }
+  .footer-brand .brand { margin-bottom: .6rem; }
+  .footer-brand p { color: var(--ink-soft); font-size: .9rem; margin: 0 0 1.2rem; line-height: 1.55; }
+  .footer-store-btn { padding: .6rem 1.1rem; font-size: .85rem; border-radius: 11px; }
+  .footer-grid { display: flex; flex-wrap: wrap; gap: 2.5rem 3rem; }
+  .footer-col h4 { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--brass); margin: 0 0 .9rem; }
+  .footer-col a { display: block; color: var(--ink); text-decoration: none; font-size: .92rem; margin-bottom: .6rem; }
   .footer-col a:hover { color: var(--accent); }
-  .footer-bottom { margin-top: 2.5rem; color: var(--ink-soft); font-size: .82rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
+  .footer-divider { border-top: 1px solid var(--border); margin: 2.75rem 0 1.75rem; }
+  .footer-credit {
+    text-align: center; color: var(--ink-soft); font-size: .82rem; line-height: 1.8; margin: 0;
+  }
+  .footer-credit .made-by { font-size: .8rem; opacity: .85; }
 
   [data-en], [data-fr] { display: none; }
 </style>
@@ -173,15 +194,27 @@
 <section class="gallery">
   <div class="wrap">
     <div class="gallery-scroll" aria-label="App screenshots">
-      <img class="lang-img" data-src-en="assets/screenshots/fr/01-home.png" data-src-fr="assets/screenshots/fr/01-home.png" alt="Home screen">
-      <img class="lang-img" data-src-en="assets/screenshots/fr/02-multiplayer.png" data-src-fr="assets/screenshots/fr/02-multiplayer.png" alt="1-on-1 multiplayer">
-      <img class="lang-img" data-src-en="assets/screenshots/fr/03-collection.png" data-src-fr="assets/screenshots/fr/03-collection.png" alt="Caribbean card collection">
-      <img class="lang-img" data-src-en="assets/screenshots/fr/04-daily-challenge.png" data-src-fr="assets/screenshots/fr/04-daily-challenge.png" alt="Daily challenge gameplay">
+      <figure>
+        <img class="lang-img" data-src-en="assets/screenshots/en/01-home-en.png" data-src-fr="assets/screenshots/fr/01-home.png" alt="Home screen">
+        <figcaption data-en>Home</figcaption><figcaption data-fr>Accueil</figcaption>
+      </figure>
+      <figure>
+        <img class="lang-img" data-src-en="assets/screenshots/en/02-multiplayer-en.png" data-src-fr="assets/screenshots/fr/02-multiplayer.png" alt="1-on-1 multiplayer lobby">
+        <figcaption data-en>1-on-1 multiplayer</figcaption><figcaption data-fr>Multijoueur 1v1</figcaption>
+      </figure>
+      <figure>
+        <img class="lang-img" data-src-en="assets/screenshots/en/05-collectible-card-en.png" data-src-fr="assets/screenshots/fr/05-collectible-card-fr.png" alt="Basse-Terre, Guadeloupe collectible card">
+        <figcaption data-en>Caribbean cards</figcaption><figcaption data-fr>Cartes caribéennes</figcaption>
+      </figure>
+      <figure>
+        <img class="lang-img" data-src-en="assets/screenshots/en/06-killer-en.png" data-src-fr="assets/screenshots/fr/06-killer-fr.png" alt="Killer mode grid">
+        <figcaption data-en>Killer</figcaption><figcaption data-fr>Killer</figcaption>
+      </figure>
+      <figure>
+        <img class="lang-img" data-src-en="assets/screenshots/en/07-honeycomb-en.png" data-src-fr="assets/screenshots/fr/07-honeycomb-fr.png" alt="Honeycomb mode grid">
+        <figcaption data-en>Honeycomb</figcaption><figcaption data-fr>Nid d'abeille</figcaption>
+      </figure>
     </div>
-    <p style="text-align:center; margin: .8rem 0 0; font-size: .82rem; color: var(--ink-soft);">
-      <span data-en>Screens shown in French — the app itself is fully available in English.</span>
-      <span data-fr>Captures en français — l'application est également disponible en anglais.</span>
-    </p>
   </div>
 </section>
 
@@ -348,34 +381,45 @@
 
 <footer>
   <div class="wrap">
-    <div class="footer-grid">
-      <div class="footer-col">
-        <h4 data-en>App</h4><h4 data-fr>App</h4>
-        <a href="#modes" data-en>Modes</a><a href="#modes" data-fr>Modes</a>
-        <a href="#pricing" data-en>Pricing</a><a href="#pricing" data-fr>Tarifs</a>
-        <a href="https://apps.apple.com/fr/app/the-caribbean-sudoku/id6775691950" data-en>App Store</a>
-        <a href="https://apps.apple.com/fr/app/the-caribbean-sudoku/id6775691950" data-fr>App Store</a>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" href="./">
+          <img src="assets/icon-180.png" alt="">
+          <span>The Caribbean Sudoku</span>
+        </a>
+        <p data-en>Six game modes, real-time duels and a daily challenge — native, offline-first, on iPhone &amp; iPad.</p>
+        <p data-fr>Six modes de jeu, duels en temps réel et défi quotidien — natif, jouable hors ligne, sur iPhone &amp; iPad.</p>
+        <a class="btn btn-primary footer-store-btn" href="https://apps.apple.com/fr/app/the-caribbean-sudoku/id6775691950" data-en>Download on the App Store</a>
+        <a class="btn btn-primary footer-store-btn" href="https://apps.apple.com/fr/app/the-caribbean-sudoku/id6775691950" data-fr>Télécharger sur l'App Store</a>
       </div>
-      <div class="footer-col">
-        <h4 data-en>Legal</h4><h4 data-fr>Légal</h4>
-        <a href="privacy.en.html" data-en>Privacy Policy</a><a href="privacy.fr.html" data-fr>Politique de confidentialité</a>
-        <a href="terms.en.html" data-en>Terms of Use</a><a href="terms.fr.html" data-fr>Conditions d'utilisation</a>
-      </div>
-      <div class="footer-col">
-        <h4 data-en>Support</h4><h4 data-fr>Assistance</h4>
-        <a href="support.en.html" data-en>Help &amp; FAQ</a><a href="support.fr.html" data-fr>Aide &amp; FAQ</a>
-        <a href="mailto:contact@caribtechstudio.com">contact@caribtechstudio.com</a>
-      </div>
-      <div class="footer-col">
-        <h4 data-en>Studio</h4><h4 data-fr>Studio</h4>
-        <a href="https://caribtechstudio.github.io">Carib Tech Studio</a>
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4 data-en>App</h4><h4 data-fr>App</h4>
+          <a href="#modes" data-en>Modes</a><a href="#modes" data-fr>Modes</a>
+          <a href="#features" data-en>Features</a><a href="#features" data-fr>Fonctionnalités</a>
+          <a href="#pricing" data-en>Pricing</a><a href="#pricing" data-fr>Tarifs</a>
+        </div>
+        <div class="footer-col">
+          <h4 data-en>Legal</h4><h4 data-fr>Légal</h4>
+          <a href="privacy.en.html" data-en>Privacy Policy</a><a href="privacy.fr.html" data-fr>Politique de confidentialité</a>
+          <a href="terms.en.html" data-en>Terms of Use</a><a href="terms.fr.html" data-fr>Conditions d'utilisation</a>
+        </div>
+        <div class="footer-col">
+          <h4 data-en>Support</h4><h4 data-fr>Assistance</h4>
+          <a href="support.en.html" data-en>Help &amp; FAQ</a><a href="support.fr.html" data-fr>Aide &amp; FAQ</a>
+          <a href="mailto:contact@caribtechstudio.com">contact@caribtechstudio.com</a>
+        </div>
+        <div class="footer-col">
+          <h4 data-en>Studio</h4><h4 data-fr>Studio</h4>
+          <a href="https://caribtechstudio.github.io">Carib Tech Studio</a>
+        </div>
       </div>
     </div>
-    <div class="footer-bottom">
-      <span>© 2026 Carib Tech Studio</span>
-      <span data-en>Made with care for iPhone &amp; iPad.</span>
-      <span data-fr>Conçu avec soin pour iPhone &amp; iPad.</span>
-    </div>
+    <div class="footer-divider"></div>
+    <p class="footer-credit">
+      Copyright © 2026 – Carib Tech Studio – Tous droits réservés.<br>
+      <span class="made-by">Site web créé par Arnaud avec 💖 et 💻</span>
+    </p>
   </div>
 </footer>
 
@@ -386,6 +430,7 @@
     if (el.classList.contains('btn')) return 'inline-flex';
     if (el.classList.contains('eyebrow')) return 'inline-block';
     if (el.classList.contains('footer-col') || el.tagName === 'DIV') return 'block';
+    if (el.tagName === 'A' && el.closest('.footer-col')) return 'block';
     if (el.tagName === 'A' || el.tagName === 'SPAN') return 'inline';
     return 'block';
   }
