@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Caribbean Sudoku — Six modes. Logic, refined.</title>
-<meta name="description" content="A native iOS Sudoku app with six game modes, real-time 1-on-1 duels, a daily challenge, iCloud sync and 35 achievements. Free to play.">
+<meta name="description" content="A native iOS Sudoku app with six game modes, real-time 1-on-1 duels, a daily challenge, 200+ collectible Caribbean cards and iCloud sync. Free to play, no account required.">
 <link rel="icon" type="image/png" href="assets/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/icon-180.png">
 <meta property="og:title" content="The Caribbean Sudoku">
-<meta property="og:description" content="Six ways to play. One beautiful grid. Race friends 1-on-1, climb the daily leaderboard, and sharpen your logic.">
+<meta property="og:description" content="Six ways to play. One beautiful grid. Duel friends in real time, chase the daily leaderboard, and collect 200+ Caribbean cards along the way.">
 <meta property="og:image" content="assets/icon-512.png">
 <meta property="og:type" content="website">
 <style>
@@ -16,36 +16,54 @@
     --bg: #F5EFE4; --surface: #FFFDF7; --raised: #FFFFFB; --ink: #102F3A;
     --ink-soft: rgba(16,47,58,.62); --accent: #277C68; --brass: #C69C4D;
     --border: rgba(198,156,77,.38); --card-shadow: 0 1px 2px rgba(16,47,58,.06), 0 8px 24px rgba(16,47,58,.05);
+    --surface-a: rgba(255,253,247,.82);
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #071F2B; --surface: #0E3340; --raised: #123E4C; --ink: #F4F2E9;
       --ink-soft: rgba(244,242,233,.62); --accent: #55D6C2; --brass: #E9C46A;
       --border: rgba(85,214,194,.24); --card-shadow: 0 1px 2px rgba(0,0,0,.2), 0 8px 24px rgba(0,0,0,.25);
+      --surface-a: rgba(14,51,64,.78);
     }
   }
   * { box-sizing: border-box; }
   html { color-scheme: light dark; }
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
   body {
     margin: 0; background: var(--bg); color: var(--ink);
     font: 16px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
   a { color: var(--accent); }
-  .wrap { max-width: 980px; margin: 0 auto; padding: 0 1.5rem; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 1.5rem; position: relative; z-index: 1; }
+
   header.top {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 1.25rem 0; max-width: 980px; margin: 0 auto; padding-left: 1.5rem; padding-right: 1.5rem;
+    padding: 1.1rem 1.5rem; max-width: 980px; margin: 0 auto;
+    position: sticky; top: 0; z-index: 50; border-bottom: 1px solid transparent;
+    transition: background-color .35s ease, border-color .35s ease, box-shadow .35s ease, padding .35s ease;
+  }
+  header.top.is-scrolled {
+    background: var(--surface-a); backdrop-filter: saturate(180%) blur(16px);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    border-color: var(--border); box-shadow: 0 6px 28px rgba(0,0,0,.07);
+    padding-top: .85rem; padding-bottom: .85rem;
   }
   .brand { display: flex; align-items: center; gap: .6rem; font-weight: 700; font-size: 1.05rem; text-decoration: none; color: var(--ink); }
-  .brand img { width: 32px; height: 32px; border-radius: 8px; display: block; }
-  nav.top-nav { display: flex; gap: 1.5rem; align-items: center; }
-  nav.top-nav a { color: var(--ink-soft); text-decoration: none; font-size: .92rem; }
+  .brand img { width: 32px; height: 32px; border-radius: 8px; display: block; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
+  .brand:hover img { transform: rotate(-8deg) scale(1.08); }
+  nav.top-nav { display: flex; gap: 1.6rem; align-items: center; }
+  nav.top-nav a { position: relative; color: var(--ink-soft); text-decoration: none; font-size: .92rem; transition: color .2s ease; padding-bottom: 2px; }
+  nav.top-nav a::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 2px;
+    background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .28s cubic-bezier(.16,1,.3,1);
+  }
   nav.top-nav a:hover { color: var(--ink); }
+  nav.top-nav a:hover::after { transform: scaleX(1); }
   .lang-toggle { display: flex; gap: .25rem; border: 1px solid var(--border); border-radius: 999px; padding: 2px; }
   .lang-toggle button {
     border: 0; background: transparent; color: var(--ink-soft); font: inherit; font-size: .82rem;
-    padding: .3rem .7rem; border-radius: 999px; cursor: pointer;
+    padding: .3rem .7rem; border-radius: 999px; cursor: pointer; transition: background-color .25s ease, color .25s ease;
   }
   .lang-toggle button.active { background: var(--accent); color: var(--surface); font-weight: 600; }
   @media (max-width: 680px) {
@@ -53,7 +71,20 @@
     nav.top-nav a { display: none !important; }
   }
 
-  .hero { padding: 3.5rem 0 3rem; text-align: center; }
+  .hero { position: relative; overflow: hidden; padding: 4.25rem 0 3.5rem; text-align: center; }
+  .hero::before, .hero::after {
+    content: ""; position: absolute; width: 480px; height: 480px; border-radius: 50%;
+    filter: blur(100px); opacity: .22; z-index: 0; pointer-events: none;
+  }
+  .hero::before { background: var(--accent); top: -230px; left: -140px; }
+  .hero::after { background: var(--brass); bottom: -260px; right: -160px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero::before { animation: float1 17s ease-in-out infinite; }
+    .hero::after { animation: float2 19s ease-in-out infinite; }
+  }
+  @keyframes float1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(50px,35px); } }
+  @keyframes float2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-40px,-45px); } }
+
   .hero .eyebrow {
     display: inline-block; color: var(--brass); font-weight: 700; letter-spacing: .06em;
     text-transform: uppercase; font-size: .78rem; margin-bottom: 1rem;
@@ -64,25 +95,46 @@
   .btn {
     display: inline-flex; align-items: center; gap: .5rem; text-decoration: none; font-weight: 600;
     padding: .85rem 1.5rem; border-radius: 14px; font-size: .98rem; border: 1px solid transparent;
+    transition: transform .22s cubic-bezier(.16,1,.3,1), box-shadow .22s ease, background-color .22s ease, opacity .22s ease;
   }
   .btn-primary { background: var(--accent); color: var(--surface); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(39,124,104,.28); }
   .btn-secondary { background: transparent; color: var(--ink); border-color: var(--border); }
+  .btn-secondary:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .btn:active { transform: translateY(0) scale(.97); }
+
+  .stats-row { display: flex; gap: 2.4rem; justify-content: center; flex-wrap: wrap; margin-top: 2.6rem; }
+  .stat { text-align: center; }
+  .stat .num { display: block; font-size: 1.65rem; font-weight: 800; color: var(--ink); letter-spacing: -.01em; }
+  .stat .label { font-size: .76rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .05em; margin-top: .2rem; }
 
   section { padding: 2.75rem 0; }
   section.alt { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
   h2 { font-size: 1.7rem; margin: 0 0 .4rem; letter-spacing: -.01em; }
   p.section-lede { color: var(--ink-soft); margin: 0 0 2rem; max-width: 620px; }
 
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity .65s cubic-bezier(.16,1,.3,1), transform .65s cubic-bezier(.16,1,.3,1); }
+  .reveal.is-visible { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .hero::before, .hero::after { animation: none !important; }
+  }
+
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
   .card {
     background: var(--raised); border: 1px solid var(--border); border-radius: 16px;
     padding: 1.4rem; box-shadow: var(--card-shadow);
+    transition: transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s ease, border-color .3s ease;
   }
-  .card .glyph { font-size: 1.5rem; margin-bottom: .6rem; display: block; }
+  .card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 16px 34px rgba(16,47,58,.12); }
+  .card .glyph { font-size: 1.5rem; margin-bottom: .6rem; display: block; transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
+  .card:hover .glyph { transform: scale(1.18) rotate(-4deg); }
   .card h3 { margin: 0 0 .4rem; font-size: 1.05rem; }
   .card p { margin: 0; color: var(--ink-soft); font-size: .92rem; }
 
   .feature-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem 2rem; }
+  .feature { padding-left: .9rem; border-left: 2px solid var(--border); transition: border-color .3s ease, transform .3s ease; }
+  .feature:hover { border-color: var(--accent); transform: translateX(3px); }
   .feature-list .feature h3 { margin: 0 0 .3rem; font-size: 1rem; }
   .feature-list .feature p { margin: 0; color: var(--ink-soft); font-size: .92rem; }
 
@@ -90,7 +142,9 @@
   .price-card {
     background: var(--raised); border: 1px solid var(--border); border-radius: 16px;
     padding: 1.5rem; box-shadow: var(--card-shadow);
+    transition: transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s ease;
   }
+  .price-card:hover { transform: translateY(-5px); box-shadow: 0 16px 34px rgba(16,47,58,.12); }
   .price-card.highlight { border-color: var(--accent); border-width: 2px; }
   .price-card .tag {
     display: inline-block; background: var(--accent); color: var(--surface); font-size: .72rem;
@@ -115,7 +169,9 @@
   .gallery-scroll img {
     display: block; height: 420px; width: auto; border-radius: 22px; border: 1px solid var(--border);
     box-shadow: var(--card-shadow); background: var(--surface);
+    transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s ease;
   }
+  .gallery-scroll figure:hover img { transform: translateY(-6px) scale(1.02); box-shadow: 0 22px 40px rgba(16,47,58,.18); }
   .gallery-scroll figcaption {
     margin-top: .65rem; font-size: .85rem; font-weight: 600; color: var(--ink-soft);
   }
@@ -127,6 +183,18 @@
     border: 1px solid var(--border); border-radius: 999px; padding: .6rem 1.2rem; font-size: .9rem;
     color: var(--ink-soft); margin-bottom: 1rem;
   }
+  .privacy-band a { text-decoration: none; font-weight: 600; }
+  .privacy-band a:hover { text-decoration: underline; }
+
+  .cta-band {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--brass) 100%);
+    color: var(--bg); text-align: center; position: relative; overflow: hidden;
+    padding: 4rem 0;
+  }
+  .cta-band h2 { color: var(--bg); }
+  .cta-band p { color: var(--bg); opacity: .92; max-width: 520px; margin: 0 auto 2rem; font-size: 1.05rem; }
+  .cta-band .btn-primary { background: var(--bg); color: var(--ink); }
+  .cta-band .btn-primary:hover { box-shadow: 0 10px 26px rgba(0,0,0,.22); }
 
   footer {
     background: var(--surface); border-top: 1px solid var(--border);
@@ -144,8 +212,8 @@
   .footer-store-btn { padding: .6rem 1.1rem; font-size: .85rem; border-radius: 11px; }
   .footer-grid { display: flex; flex-wrap: wrap; gap: 2.5rem 3rem; }
   .footer-col h4 { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--brass); margin: 0 0 .9rem; }
-  .footer-col a { display: block; color: var(--ink); text-decoration: none; font-size: .92rem; margin-bottom: .6rem; }
-  .footer-col a:hover { color: var(--accent); }
+  .footer-col a { display: block; color: var(--ink); text-decoration: none; font-size: .92rem; margin-bottom: .6rem; transition: color .2s ease, transform .2s ease; }
+  .footer-col a:hover { color: var(--accent); transform: translateX(3px); }
   .footer-divider { border-top: 1px solid var(--border); margin: 2.75rem 0 1.75rem; }
   .footer-credit {
     text-align: center; color: var(--ink-soft); font-size: .82rem; line-height: 1.8; margin: 0;
@@ -180,13 +248,18 @@
     <span class="eyebrow" data-fr>Natif iOS · iPhone &amp; iPad</span>
     <h1 data-en>Six modes. Logic, refined.</h1>
     <h1 data-fr>Six modes. La logique, sublimée.</h1>
-    <p class="lede" data-en>Race friends 1-on-1, climb the daily leaderboard, and sharpen your logic on a beautiful, calm grid — playable offline and synced across all your devices.</p>
-    <p class="lede" data-fr>Affrontez vos amis en 1v1, grimpez au classement quotidien et aiguisez votre logique sur une grille élégante et apaisante — jouable hors ligne, synchronisée sur tous vos appareils.</p>
+    <p class="lede" data-en>Duel a friend in real time, chase the daily leaderboard, and think three moves ahead on a grid built to feel calm — fully offline, perfectly synced, no account required.</p>
+    <p class="lede" data-fr>Affrontez un ami en temps réel, grimpez au classement quotidien et anticipez trois coups à l'avance sur une grille pensée pour rester apaisante — jouable hors ligne, parfaitement synchronisée, sans aucun compte.</p>
     <div class="cta-row">
       <a class="btn btn-primary" href="https://apps.apple.com/fr/app/the-caribbean-sudoku/id6775691950" data-en>Download on the App Store</a>
       <a class="btn btn-primary" href="https://apps.apple.com/fr/app/the-caribbean-sudoku/id6775691950" data-fr>Télécharger sur l'App Store</a>
       <a class="btn btn-secondary" href="#modes" data-en>See the six modes</a>
       <a class="btn btn-secondary" href="#modes" data-fr>Voir les six modes</a>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><span class="num" data-count="6">0</span><span class="label" data-en>Game modes</span><span class="label" data-fr>Modes de jeu</span></div>
+      <div class="stat"><span class="num" data-count="200" data-suffix="+">0</span><span class="label" data-en>Caribbean cards</span><span class="label" data-fr>Cartes caribéennes</span></div>
+      <div class="stat"><span class="num">🔒</span><span class="label" data-en>No tracking, ever</span><span class="label" data-fr>Aucun tracking</span></div>
     </div>
   </div>
 </section>
@@ -220,10 +293,10 @@
 
 <section id="modes" class="alt">
   <div class="wrap">
-    <h2 data-en>Six ways to play</h2>
-    <h2 data-fr>Six façons de jouer</h2>
-    <p class="section-lede" data-en>Every puzzle is generated by a real difficulty-rating engine — never random clue removal — and always has exactly one solution.</p>
-    <p class="section-lede" data-fr>Chaque grille est générée par un véritable moteur d'évaluation de difficulté — jamais un retrait de chiffres au hasard — et possède toujours une solution unique.</p>
+    <h2 class="reveal" data-en>Six grids. Real difficulty, never random.</h2>
+    <h2 class="reveal" data-fr>Six grilles. De la vraie difficulté, jamais du hasard.</h2>
+    <p class="section-lede reveal" data-en>Every puzzle is generated by a real difficulty-rating engine — never random clue removal — and always has exactly one solution.</p>
+    <p class="section-lede reveal" data-fr>Chaque grille est générée par un véritable moteur d'évaluation de difficulté — jamais un retrait de chiffres au hasard — et possède toujours une solution unique.</p>
     <div class="grid">
       <div class="card">
         <span class="glyph">▦</span>
@@ -267,10 +340,10 @@
 
 <section id="features">
   <div class="wrap">
-    <h2 data-en>Duel a friend, daily challenge, and more</h2>
-    <h2 data-fr>Duel entre amis, défi quotidien, et plus encore</h2>
-    <p class="section-lede" data-en>Built to help you actually get better, not just fill in numbers.</p>
-    <p class="section-lede" data-fr>Conçu pour vous faire vraiment progresser, pas seulement remplir des cases.</p>
+    <h2 class="reveal" data-en>Duel a friend, chase the daily challenge, and more</h2>
+    <h2 class="reveal" data-fr>Duel entre amis, défi quotidien, et plus encore</h2>
+    <p class="section-lede reveal" data-en>Built to help you actually get better, not just fill in numbers.</p>
+    <p class="section-lede reveal" data-fr>Conçu pour vous faire vraiment progresser, pas seulement remplir des cases.</p>
     <div class="feature-list">
       <div class="feature">
         <h3 data-en>1-on-1 multiplayer</h3><h3 data-fr>Multijoueur 1v1</h3>
@@ -323,10 +396,10 @@
 
 <section id="pricing" class="alt">
   <div class="wrap">
-    <h2 data-en>Free to play, fair by design</h2>
-    <h2 data-fr>Gratuit, et réglo</h2>
-    <p class="section-lede" data-en>The free version is supported by ads — one at the end of a game, never mid-puzzle. Remove them whenever you like.</p>
-    <p class="section-lede" data-fr>La version gratuite est financée par la publicité — une seule en fin de partie, jamais au milieu d'une grille. Retirez-les quand vous voulez.</p>
+    <h2 class="reveal" data-en>Free to play, fair by design</h2>
+    <h2 class="reveal" data-fr>Gratuit, et réglo</h2>
+    <p class="section-lede reveal" data-en>The free version is supported by ads — one at the end of a game, never mid-puzzle. Remove them whenever you like.</p>
+    <p class="section-lede reveal" data-fr>La version gratuite est financée par la publicité — une seule en fin de partie, jamais au milieu d'une grille. Retirez-les quand vous voulez.</p>
     <div class="pricing-grid">
       <div class="price-card">
         <h3 data-en>Free</h3><h3 data-fr>Gratuit</h3>
@@ -379,6 +452,17 @@
   </div>
 </section>
 
+<section class="cta-band">
+  <div class="wrap">
+    <h2 data-en>Bring your logic to the beach.</h2>
+    <h2 data-fr>Emmenez votre logique à la plage.</h2>
+    <p data-en>Free to download. No account, no pressure — just six grids and a really good daily habit.</p>
+    <p data-fr>Gratuit à télécharger. Aucun compte, aucune pression — juste six grilles et une très bonne habitude quotidienne.</p>
+    <a class="btn btn-primary" href="https://apps.apple.com/fr/app/the-caribbean-sudoku/id6775691950" data-en>Download on the App Store</a>
+    <a class="btn btn-primary" href="https://apps.apple.com/fr/app/the-caribbean-sudoku/id6775691950" data-fr>Télécharger sur l'App Store</a>
+  </div>
+</section>
+
 <footer>
   <div class="wrap">
     <div class="footer-top">
@@ -426,6 +510,8 @@
 <script>
 (function () {
   var STORAGE_KEY = 'ccs-lang';
+  var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   function naturalDisplay(el) {
     if (el.classList.contains('btn')) return 'inline-flex';
     if (el.classList.contains('eyebrow')) return 'inline-block';
@@ -464,6 +550,70 @@
     });
   });
   apply(detect());
+
+  // Sticky header background/blur once the page has scrolled.
+  var header = document.querySelector('header.top');
+  var ticking = false;
+  function updateHeader() {
+    header.classList.toggle('is-scrolled', window.scrollY > 8);
+    ticking = false;
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { requestAnimationFrame(updateHeader); ticking = true; }
+  }, { passive: true });
+  updateHeader();
+
+  // Auto-tag grid/list children as reveal-on-scroll items, staggered.
+  document.querySelectorAll('.grid, .feature-list, .pricing-grid, .gallery-scroll').forEach(function (group) {
+    Array.from(group.children).forEach(function (child, i) {
+      child.classList.add('reveal');
+      child.style.transitionDelay = Math.min(i * 70, 350) + 'ms';
+    });
+  });
+
+  if (prefersReduced || typeof IntersectionObserver === 'undefined') {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('is-visible'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .15, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  }
+
+  // Count up the hero stat numbers once they scroll into view.
+  function countUp(el) {
+    var target = parseFloat(el.getAttribute('data-count'));
+    var suffix = el.getAttribute('data-suffix') || '';
+    if (prefersReduced) { el.textContent = target + suffix; return; }
+    var start = null; var duration = 900;
+    function step(ts) {
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(eased * target) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  var statsRow = document.querySelector('.stats-row');
+  if (statsRow && typeof IntersectionObserver !== 'undefined') {
+    var statIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          document.querySelectorAll('.stat .num[data-count]').forEach(countUp);
+          statIo.disconnect();
+        }
+      });
+    }, { threshold: .4 });
+    statIo.observe(statsRow);
+  } else if (statsRow) {
+    document.querySelectorAll('.stat .num[data-count]').forEach(countUp);
+  }
 })();
 </script>
 
