@@ -1,599 +1,420 @@
-<!DOCTYPE html>
-<html lang="fr" data-lang="fr">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Caribbean Sudoku — Six modes. La logique, sublimée.</title>
-  <meta name="description" data-meta-fr="Six façons de jouer, une grille élégante. Duels 1v1 en temps réel, défi quotidien classé, synchro iCloud. Sans pub, hors ligne. Sur iPhone et iPad." data-meta-en="Six ways to play, one beautiful grid. Real-time 1-on-1 duels, a ranked daily challenge, iCloud sync. Ad-free and offline. For iPhone and iPad." content="Six façons de jouer, une grille élégante. Duels 1v1 en temps réel, défi quotidien classé, synchro iCloud. Sans pub, hors ligne. Sur iPhone et iPad." />
-  <meta name="theme-color" content="#FAF8F3" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#15171A" media="(prefers-color-scheme: dark)" />
-
-  <!-- Icons -->
-  <link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="The Caribbean Sudoku" />
-  <meta property="og:description" content="Six modes. La logique, sublimée. Sur iPhone et iPad." />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="icon.png" />
-  <meta name="twitter:card" content="summary" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Caribbean Sudoku — Six modes. Logic, refined.</title>
+<meta name="description" content="A native iOS Sudoku app with six game modes, real-time 1-on-1 duels, a daily challenge, iCloud sync and 35 achievements. Free to play.">
+<link rel="icon" type="image/png" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<meta property="og:title" content="The Caribbean Sudoku">
+<meta property="og:description" content="Six ways to play. One beautiful grid. Race friends 1-on-1, climb the daily leaderboard, and sharpen your logic.">
+<meta property="og:image" content="assets/icon-512.png">
+<meta property="og:type" content="website">
+<style>
+  :root {
+    --bg: #F5EFE4; --surface: #FFFDF7; --raised: #FFFFFB; --ink: #102F3A;
+    --ink-soft: rgba(16,47,58,.62); --accent: #277C68; --brass: #C69C4D;
+    --border: rgba(198,156,77,.38); --card-shadow: 0 1px 2px rgba(16,47,58,.06), 0 8px 24px rgba(16,47,58,.05);
+  }
+  @media (prefers-color-scheme: dark) {
     :root {
-      /* Paper theme — the app's default identity */
-      --bg:          #FAF8F3;
-      --surface:     #FFFFFF;
-      --surface-2:   #F4F1EA;
-      --border:      #E8E3D7;
-      --border-soft: #EFEBE1;
-      --ink:         #1A1D21;
-      --ink-soft:    #595E66;
-      --ink-faint:   #8C9097;
-      --accent:      #4F46E5;
-      --accent-deep: #4338CA;
-      --accent-soft: rgba(79, 70, 229, 0.07);
-      --shadow:      0 1px 2px rgba(26,29,33,0.04), 0 12px 40px rgba(26,29,33,0.05);
-      --shadow-sm:   0 1px 2px rgba(26,29,33,0.05), 0 4px 16px rgba(26,29,33,0.04);
-
-      --font-display: 'Fraunces', Georgia, serif;
-      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      --maxw: 1080px;
+      --bg: #071F2B; --surface: #0E3340; --raised: #123E4C; --ink: #F4F2E9;
+      --ink-soft: rgba(244,242,233,.62); --accent: #55D6C2; --brass: #E9C46A;
+      --border: rgba(85,214,194,.24); --card-shadow: 0 1px 2px rgba(0,0,0,.2), 0 8px 24px rgba(0,0,0,.25);
     }
+  }
+  * { box-sizing: border-box; }
+  html { color-scheme: light dark; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 1.5rem; }
+  header.top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 0; max-width: 980px; margin: 0 auto; padding-left: 1.5rem; padding-right: 1.5rem;
+  }
+  .brand { display: flex; align-items: center; gap: .6rem; font-weight: 700; font-size: 1.05rem; text-decoration: none; color: var(--ink); }
+  .brand img { width: 32px; height: 32px; border-radius: 8px; display: block; }
+  nav.top-nav { display: flex; gap: 1.5rem; align-items: center; }
+  nav.top-nav a { color: var(--ink-soft); text-decoration: none; font-size: .92rem; }
+  nav.top-nav a:hover { color: var(--ink); }
+  .lang-toggle { display: flex; gap: .25rem; border: 1px solid var(--border); border-radius: 999px; padding: 2px; }
+  .lang-toggle button {
+    border: 0; background: transparent; color: var(--ink-soft); font: inherit; font-size: .82rem;
+    padding: .3rem .7rem; border-radius: 999px; cursor: pointer;
+  }
+  .lang-toggle button.active { background: var(--accent); color: var(--surface); font-weight: 600; }
+  @media (max-width: 680px) {
+    header.top { flex-wrap: wrap; row-gap: .75rem; }
+    nav.top-nav a { display: none !important; }
+  }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        /* Ink theme */
-        --bg:          #15171A;
-        --surface:     #1F2226;
-        --surface-2:   #1A1D21;
-        --border:      #2C3036;
-        --border-soft: #25282D;
-        --ink:         #ECEEF2;
-        --ink-soft:    #A2A8B0;
-        --ink-faint:   #6B7178;
-        --accent:      #818CF8;
-        --accent-deep: #A5B0FF;
-        --accent-soft: rgba(129, 140, 248, 0.12);
-        --shadow:      0 1px 2px rgba(0,0,0,0.3), 0 16px 48px rgba(0,0,0,0.35);
-        --shadow-sm:   0 1px 2px rgba(0,0,0,0.3), 0 6px 20px rgba(0,0,0,0.25);
-      }
-    }
+  .hero { padding: 3.5rem 0 3rem; text-align: center; }
+  .hero .eyebrow {
+    display: inline-block; color: var(--brass); font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; font-size: .78rem; margin-bottom: 1rem;
+  }
+  .hero h1 { font-size: clamp(2.1rem, 5vw, 3.2rem); line-height: 1.1; margin: 0 0 1rem; letter-spacing: -.01em; }
+  .hero p.lede { max-width: 640px; margin: 0 auto 2rem; color: var(--ink-soft); font-size: 1.15rem; }
+  .cta-row { display: flex; gap: .9rem; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: .5rem; text-decoration: none; font-weight: 600;
+    padding: .85rem 1.5rem; border-radius: 14px; font-size: .98rem; border: 1px solid transparent;
+  }
+  .btn-primary { background: var(--accent); color: var(--surface); }
+  .btn-secondary { background: transparent; color: var(--ink); border-color: var(--border); }
 
-    /* ── Language toggling ── */
-    html[data-lang="fr"] [data-en] { display: none; }
-    html[data-lang="en"] [data-fr] { display: none; }
+  section { padding: 2.75rem 0; }
+  section.alt { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  h2 { font-size: 1.7rem; margin: 0 0 .4rem; letter-spacing: -.01em; }
+  p.section-lede { color: var(--ink-soft); margin: 0 0 2rem; max-width: 620px; }
 
-    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
+  .card {
+    background: var(--raised); border: 1px solid var(--border); border-radius: 16px;
+    padding: 1.4rem; box-shadow: var(--card-shadow);
+  }
+  .card .glyph { font-size: 1.5rem; margin-bottom: .6rem; display: block; }
+  .card h3 { margin: 0 0 .4rem; font-size: 1.05rem; }
+  .card p { margin: 0; color: var(--ink-soft); font-size: .92rem; }
 
-    body {
-      background: var(--bg);
-      color: var(--ink);
-      font-family: var(--font-sans);
-      line-height: 1.65;
-      font-size: 17px;
-      letter-spacing: -0.005em;
-    }
+  .feature-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem 2rem; }
+  .feature-list .feature h3 { margin: 0 0 .3rem; font-size: 1rem; }
+  .feature-list .feature p { margin: 0; color: var(--ink-soft); font-size: .92rem; }
 
-    a { color: inherit; }
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+  .price-card {
+    background: var(--raised); border: 1px solid var(--border); border-radius: 16px;
+    padding: 1.5rem; box-shadow: var(--card-shadow);
+  }
+  .price-card.highlight { border-color: var(--accent); border-width: 2px; }
+  .price-card .tag {
+    display: inline-block; background: var(--accent); color: var(--surface); font-size: .72rem;
+    font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: .2rem .55rem; border-radius: 999px;
+    margin-bottom: .7rem;
+  }
+  .price-card h3 { margin: 0 0 .2rem; font-size: 1.1rem; }
+  .price-card .amount { font-size: 1.6rem; font-weight: 700; margin: .3rem 0 .8rem; }
+  .price-card .amount small { font-size: .85rem; font-weight: 500; color: var(--ink-soft); }
+  .price-card ul { margin: 0; padding-left: 1.1rem; color: var(--ink-soft); font-size: .9rem; }
+  .price-card ul li { margin-bottom: .3rem; }
+  .price-note { color: var(--ink-soft); font-size: .85rem; margin-top: 1.2rem; }
 
-    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  .gallery { padding-top: 0; }
+  .gallery-scroll {
+    display: flex; gap: 1.1rem; overflow-x: auto; padding: .5rem .1rem 1.2rem;
+    scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+  }
+  .gallery-scroll::-webkit-scrollbar { height: 6px; }
+  .gallery-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+  .gallery-scroll img {
+    height: 420px; width: auto; border-radius: 22px; border: 1px solid var(--border);
+    box-shadow: var(--card-shadow); scroll-snap-align: start; flex: 0 0 auto; background: var(--surface);
+  }
+  @media (max-width: 640px) { .gallery-scroll img { height: 320px; } }
 
-    /* ── NAV ── */
-    nav {
-      position: sticky;
-      top: 0; z-index: 100;
-      background: color-mix(in srgb, var(--bg) 82%, transparent);
-      backdrop-filter: saturate(180%) blur(14px);
-      -webkit-backdrop-filter: saturate(180%) blur(14px);
-      border-bottom: 1px solid var(--border-soft);
-    }
-    .nav-inner {
-      max-width: var(--maxw); margin: 0 auto; padding: 14px 24px;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    }
-    .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; }
-    .brand-mark { width: 30px; height: 30px; display: block; }
-    .brand-name {
-      font-family: var(--font-display);
-      font-weight: 600; font-size: 1.18rem; letter-spacing: -0.01em; color: var(--ink);
-    }
-    .nav-right { display: flex; align-items: center; gap: 8px; }
-    .nav-links { display: flex; gap: 4px; margin-right: 8px; }
-    .nav-links a {
-      text-decoration: none; color: var(--ink-soft); font-size: 0.92rem; font-weight: 500;
-      padding: 7px 12px; border-radius: 8px; transition: color .15s, background .15s;
-    }
-    .nav-links a:hover { color: var(--ink); background: var(--surface-2); }
+  .privacy-band { text-align: center; }
+  .privacy-band .badge {
+    display: inline-flex; align-items: center; gap: .5rem; background: var(--raised);
+    border: 1px solid var(--border); border-radius: 999px; padding: .6rem 1.2rem; font-size: .9rem;
+    color: var(--ink-soft); margin-bottom: 1rem;
+  }
 
-    .lang-toggle {
-      display: inline-flex; border: 1px solid var(--border); border-radius: 9px;
-      overflow: hidden; background: var(--surface);
-    }
-    .lang-toggle button {
-      font-family: var(--font-sans); font-size: 0.78rem; font-weight: 600;
-      letter-spacing: 0.02em; padding: 6px 11px; border: 0; background: transparent;
-      color: var(--ink-faint); cursor: pointer; transition: color .15s, background .15s;
-    }
-    html[data-lang="fr"] .lang-toggle [data-set="fr"],
-    html[data-lang="en"] .lang-toggle [data-set="en"] { background: var(--accent); color: #fff; }
+  footer { border-top: 1px solid var(--border); padding: 2.5rem 0 3rem; }
+  .footer-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2rem; }
+  .footer-col h4 { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-soft); margin: 0 0 .8rem; }
+  .footer-col a { display: block; color: var(--ink); text-decoration: none; font-size: .92rem; margin-bottom: .55rem; }
+  .footer-col a:hover { color: var(--accent); }
+  .footer-bottom { margin-top: 2.5rem; color: var(--ink-soft); font-size: .82rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; }
 
-    .btn {
-      font-family: var(--font-sans); font-weight: 600; font-size: 0.93rem;
-      text-decoration: none; border-radius: 10px; padding: 9px 17px;
-      display: inline-flex; align-items: center; gap: 8px; cursor: pointer; border: 1px solid transparent;
-      transition: transform .12s ease, background .15s, border-color .15s, box-shadow .15s;
-      white-space: nowrap;
-    }
-    .btn-primary { background: var(--accent); color: #fff; box-shadow: var(--shadow-sm); }
-    .btn-primary:hover { background: var(--accent-deep); transform: translateY(-1px); }
-    .btn-ghost { background: var(--surface); color: var(--ink); border-color: var(--border); }
-    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
-    .btn-lg { padding: 13px 24px; font-size: 1rem; border-radius: 12px; }
-
-    /* ── HERO ── */
-    .hero { position: relative; overflow: hidden; padding: 96px 0 80px; }
-    .hero-bg {
-      position: absolute; inset: 0; pointer-events: none; z-index: 0;
-      background-image:
-        linear-gradient(var(--border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 56px 56px;
-      -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 32%, #000 0%, transparent 72%);
-      mask-image: radial-gradient(ellipse 75% 65% at 50% 32%, #000 0%, transparent 72%);
-      opacity: 0.5;
-    }
-    .hero-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; }
-    .eyebrow {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.02em; color: var(--accent);
-      background: var(--accent-soft); padding: 6px 13px; border-radius: 999px; margin-bottom: 22px;
-    }
-    .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
-    h1.hero-title {
-      font-family: var(--font-display); font-weight: 500;
-      font-size: clamp(2.6rem, 6vw, 4.4rem); line-height: 1.04; letter-spacing: -0.025em;
-      margin-bottom: 22px;
-    }
-    h1.hero-title em { font-style: italic; color: var(--accent); font-weight: 500; }
-    .hero-sub { font-size: 1.16rem; color: var(--ink-soft); max-width: 480px; margin-bottom: 34px; }
-    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-    .hero-note { margin-top: 18px; font-size: 0.86rem; color: var(--ink-faint); }
-
-    /* Hero grid illustration */
-    .hero-art { display: flex; justify-content: center; }
-    .grid-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 22px;
-      padding: 26px; box-shadow: var(--shadow); width: 100%; max-width: 360px;
-    }
-    .sudoku-grid { width: 100%; aspect-ratio: 1; display: block; }
-    .grid-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; }
-    .grid-meta .chip {
-      font-size: 0.74rem; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase;
-      color: var(--ink-faint);
-    }
-    .grid-meta .timer { font-family: var(--font-display); font-weight: 500; font-size: 1.1rem; color: var(--ink); }
-
-    /* ── STATS ── */
-    .stats { border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); background: var(--surface); }
-    .stats-inner {
-      max-width: var(--maxw); margin: 0 auto; padding: 30px 24px;
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
-    }
-    .stat { text-align: center; }
-    .stat-num { font-family: var(--font-display); font-weight: 500; font-size: 2.1rem; color: var(--ink); line-height: 1; display: block; }
-    .stat-label { font-size: 0.8rem; color: var(--ink-faint); margin-top: 8px; }
-
-    /* ── SECTIONS ── */
-    section.block { padding: 92px 0; }
-    .section-head { max-width: 600px; margin-bottom: 48px; }
-    .section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
-    .section-eyebrow { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
-    h2.section-title { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.9rem, 3.6vw, 2.7rem); line-height: 1.12; letter-spacing: -0.02em; }
-    .section-lead { font-size: 1.08rem; color: var(--ink-soft); margin-top: 16px; }
-
-    /* Modes */
-    .modes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .mode-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-      padding: 26px; transition: transform .15s, box-shadow .2s, border-color .2s;
-    }
-    .mode-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--accent) 35%, var(--border)); }
-    .mode-ico { width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
-    .mode-ico svg { width: 20px; height: 20px; stroke: var(--accent); fill: none; stroke-width: 1.8; }
-    .mode-name { font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; margin-bottom: 8px; letter-spacing: -0.01em; }
-    .mode-desc { font-size: 0.95rem; color: var(--ink-soft); }
-
-    /* Split feature (duel + daily) */
-    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .panel {
-      border-radius: 20px; padding: 40px; border: 1px solid var(--border);
-      background: var(--surface); box-shadow: var(--shadow-sm);
-    }
-    .panel.accent { background: linear-gradient(160deg, var(--accent) 0%, var(--accent-deep) 100%); color: #fff; border-color: transparent; }
-    .panel.accent .panel-eyebrow, .panel.accent .panel-body { color: rgba(255,255,255,0.82); }
-    .panel-eyebrow { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
-    .panel-title { font-family: var(--font-display); font-weight: 500; font-size: 1.6rem; line-height: 1.15; letter-spacing: -0.015em; margin-bottom: 14px; }
-    .panel-body { font-size: 1rem; color: var(--ink-soft); }
-
-    /* Features */
-    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px 32px; }
-    .feature-ico { width: 42px; height: 42px; border-radius: 11px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
-    .feature-ico svg { width: 22px; height: 22px; stroke: var(--accent); fill: none; stroke-width: 1.7; }
-    .feature-name { font-weight: 600; font-size: 1.05rem; margin-bottom: 6px; }
-    .feature-desc { font-size: 0.95rem; color: var(--ink-soft); }
-
-    /* Pricing */
-    .price-wrap { max-width: 460px; margin: 0 auto; }
-    .price-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 22px;
-      padding: 44px 40px; text-align: center; box-shadow: var(--shadow);
-    }
-    .price-badge { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); }
-    .price-amount { font-family: var(--font-display); font-weight: 500; font-size: 3.4rem; line-height: 1; margin: 14px 0 6px; }
-    .price-sub { font-size: 0.92rem; color: var(--ink-faint); margin-bottom: 28px; }
-    .price-list { list-style: none; text-align: left; margin-bottom: 30px; }
-    .price-list li { display: flex; align-items: flex-start; gap: 11px; padding: 9px 0; font-size: 0.97rem; border-bottom: 1px solid var(--border-soft); color: var(--ink-soft); }
-    .price-list li:last-child { border-bottom: 0; }
-    .price-list svg { width: 18px; height: 18px; stroke: var(--accent); fill: none; stroke-width: 2; flex-shrink: 0; margin-top: 3px; }
-
-    /* ── FOOTER ── */
-    footer { border-top: 1px solid var(--border-soft); background: var(--surface); }
-    .footer-inner { max-width: var(--maxw); margin: 0 auto; padding: 44px 24px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 28px; }
-    .footer-brand { max-width: 280px; }
-    .footer-brand .brand { margin-bottom: 14px; }
-    .footer-tagline { font-size: 0.9rem; color: var(--ink-faint); }
-    .footer-cols { display: flex; gap: 64px; flex-wrap: wrap; }
-    .footer-col h4 { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 14px; }
-    .footer-col a { display: block; text-decoration: none; color: var(--ink-soft); font-size: 0.94rem; padding: 4px 0; transition: color .15s; }
-    .footer-col a:hover { color: var(--accent); }
-    .footer-base { border-top: 1px solid var(--border-soft); }
-    .footer-base-inner { max-width: var(--maxw); margin: 0 auto; padding: 20px 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: 0.84rem; color: var(--ink-faint); }
-
-    /* Reveal */
-    .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
-    .reveal.visible { opacity: 1; transform: none; }
-    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; } html { scroll-behavior: auto; } }
-
-    /* Responsive */
-    @media (max-width: 920px) {
-      .hero-inner { grid-template-columns: 1fr; gap: 44px; }
-      .hero-art { order: -1; }
-      .grid-card { max-width: 320px; }
-      .modes-grid, .features-grid { grid-template-columns: repeat(2, 1fr); }
-      .split { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 620px) {
-      body { font-size: 16px; }
-      .nav-links { display: none; }
-      .hero { padding: 64px 0 56px; }
-      section.block { padding: 64px 0; }
-      .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 28px 16px; }
-      .modes-grid, .features-grid { grid-template-columns: 1fr; }
-      .panel { padding: 30px; }
-      .footer-cols { gap: 40px; }
-    }
-  </style>
+  [data-en], [data-fr] { display: none; }
+</style>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav>
-    <div class="nav-inner">
-      <a class="brand" href="#top" aria-label="The Caribbean Sudoku">
-        <picture>
-          <source srcset="icon-dark.png" media="(prefers-color-scheme: dark)" />
-          <img class="brand-mark" src="icon.png" width="30" height="30" alt="" />
-        </picture>
-        <span class="brand-name">The Caribbean Sudoku</span>
-      </a>
-      <div class="nav-right">
-        <div class="nav-links">
-          <a href="#modes"><span data-fr>Modes</span><span data-en>Modes</span></a>
-          <a href="#features"><span data-fr>Fonctionnalités</span><span data-en>Features</span></a>
-          <a href="#pricing"><span data-fr>Prix</span><span data-en>Pricing</span></a>
-        </div>
-        <div class="lang-toggle" role="group" aria-label="Language">
-          <button data-set="fr" onclick="setLang('fr')">FR</button>
-          <button data-set="en" onclick="setLang('en')">EN</button>
-        </div>
-        <a class="btn btn-primary" href="#pricing">
-          <span data-fr>Télécharger</span><span data-en>Download</span>
-        </a>
-      </div>
-    </div>
+<header class="top">
+  <a class="brand" href="./">
+    <img src="assets/icon-180.png" alt="">
+    <span>The Caribbean Sudoku</span>
+  </a>
+  <nav class="top-nav">
+    <a href="#modes" data-en>Modes</a><a href="#modes" data-fr>Modes</a>
+    <a href="#features" data-en>Features</a><a href="#features" data-fr>Fonctionnalités</a>
+    <a href="#pricing" data-en>Pricing</a><a href="#pricing" data-fr>Tarifs</a>
+    <a href="support.en.html" data-en id="nav-support">Support</a><a href="support.fr.html" data-fr id="nav-support-fr">Support</a>
+    <span class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" data-set-lang="en" id="lang-en">EN</button>
+      <button type="button" data-set-lang="fr" id="lang-fr">FR</button>
+    </span>
   </nav>
+</header>
 
-  <span id="top"></span>
-
-  <!-- HERO -->
-  <header class="hero">
-    <div class="hero-bg"></div>
-    <div class="wrap hero-inner">
-      <div>
-        <span class="eyebrow">
-          <span class="dot"></span>
-          <span data-fr>iOS · iPhone &amp; iPad</span><span data-en>iOS · iPhone &amp; iPad</span>
-        </span>
-        <h1 class="hero-title">
-          <span data-fr>Six modes.<br>La logique,<br><em>sublimée.</em></span>
-          <span data-en>Six modes.<br>Logic,<br><em>refined.</em></span>
-        </h1>
-        <p class="hero-sub">
-          <span data-fr>Le Sudoku pour celles et ceux qui aiment vraiment ce jeu — et le veulent bien fait. Duels 1v1 en temps réel, défi quotidien classé, et une interface sobre qui s'efface devant le plaisir de jouer.</span>
-          <span data-en>The Sudoku app for people who love the puzzle — and expect it done right. Real-time 1-on-1 duels, a ranked daily challenge, and a calm interface that gets out of your way.</span>
-        </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary btn-lg" href="#pricing">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.5 1.6c.1 1.2-.4 2.4-1.1 3.3-.8.9-2 1.6-3.2 1.5-.1-1.2.4-2.4 1.1-3.2.8-.9 2-1.5 3.2-1.6zM20 17c-.5 1.2-.8 1.7-1.5 2.7-1 1.5-2.4 3.3-4.1 3.3-1.5 0-1.9-1-4-1-2 0-2.5 1-4 1-1.7 0-3-1.7-4-3.1C-.4 16.7-.7 11.4 1.6 8.6 2.8 7.2 4.4 6.3 6.1 6.3c1.7 0 2.8 1 4.2 1 1.4 0 2.2-1 4.2-1 1.5 0 3.1.8 4.2 2.2-3.7 2-3.1 7.3.3 8.5z"/></svg>
-            <span data-fr>App Store</span><span data-en>App Store</span>
-          </a>
-          <a class="btn btn-ghost btn-lg" href="#modes">
-            <span data-fr>Découvrir les modes</span><span data-en>Explore the modes</span>
-          </a>
-        </div>
-        <p class="hero-note">
-          <span data-fr>Achat unique · Sans pub · Sans pistage · Hors ligne</span>
-          <span data-en>One-time purchase · No ads · No tracking · Offline</span>
-        </p>
-      </div>
-
-      <!-- Hero illustration: a tasteful mini sudoku -->
-      <div class="hero-art">
-        <div class="grid-card">
-          <svg class="sudoku-grid" viewBox="0 0 270 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sudoku grid">
-            <rect x="0" y="0" width="270" height="270" rx="10" fill="var(--surface-2)"/>
-            <g stroke="var(--border)" stroke-width="1">
-              <line x1="30" y1="0" x2="30" y2="270"/><line x1="60" y1="0" x2="60" y2="270"/>
-              <line x1="120" y1="0" x2="120" y2="270"/><line x1="150" y1="0" x2="150" y2="270"/>
-              <line x1="210" y1="0" x2="210" y2="270"/><line x1="240" y1="0" x2="240" y2="270"/>
-              <line x1="0" y1="30" x2="270" y2="30"/><line x1="0" y1="60" x2="270" y2="60"/>
-              <line x1="0" y1="120" x2="270" y2="120"/><line x1="0" y1="150" x2="270" y2="150"/>
-              <line x1="0" y1="210" x2="270" y2="210"/><line x1="0" y1="240" x2="270" y2="240"/>
-            </g>
-            <g stroke="var(--ink-faint)" stroke-width="2" opacity="0.5">
-              <line x1="90" y1="0" x2="90" y2="270"/><line x1="180" y1="0" x2="180" y2="270"/>
-              <line x1="0" y1="90" x2="270" y2="90"/><line x1="0" y1="180" x2="270" y2="180"/>
-            </g>
-            <g font-family="Fraunces, Georgia, serif" font-size="18" text-anchor="middle" dominant-baseline="central">
-              <!-- givens (ink) -->
-              <text x="15" y="16" fill="var(--ink)">5</text>
-              <text x="75" y="16" fill="var(--ink)">3</text>
-              <text x="195" y="16" fill="var(--ink)">7</text>
-              <text x="15" y="46" fill="var(--ink)">6</text>
-              <text x="105" y="46" fill="var(--ink)">1</text>
-              <text x="135" y="46" fill="var(--ink)">9</text>
-              <text x="165" y="46" fill="var(--ink)">5</text>
-              <text x="45" y="76" fill="var(--ink)">9</text>
-              <text x="75" y="76" fill="var(--ink)">8</text>
-              <text x="225" y="76" fill="var(--ink)">6</text>
-              <text x="135" y="135" fill="var(--ink)">8</text>
-              <text x="255" y="135" fill="var(--ink)">3</text>
-              <text x="15" y="225" fill="var(--ink)">2</text>
-              <text x="195" y="255" fill="var(--ink)">9</text>
-              <text x="255" y="255" fill="var(--ink)">7</text>
-              <!-- player entries (accent) -->
-              <text x="135" y="16" fill="var(--accent)" font-weight="500">6</text>
-              <text x="45" y="135" fill="var(--accent)" font-weight="500">4</text>
-              <text x="105" y="195" fill="var(--accent)" font-weight="500">3</text>
-              <text x="225" y="195" fill="var(--accent)" font-weight="500">1</text>
-            </g>
-            <!-- selected cell -->
-            <rect x="91" y="121" width="28" height="28" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2" rx="3"/>
-          </svg>
-          <div class="grid-meta">
-            <span class="chip"><span data-fr>Difficile</span><span data-en>Hard</span></span>
-            <span class="timer">04:12</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- STATS -->
-  <div class="stats">
-    <div class="stats-inner">
-      <div class="stat reveal"><span class="stat-num">6</span><span class="stat-label"><span data-fr>Modes de jeu</span><span data-en>Game modes</span></span></div>
-      <div class="stat reveal"><span class="stat-num">3</span><span class="stat-label"><span data-fr>Niveaux de difficulté</span><span data-en>Difficulty levels</span></span></div>
-      <div class="stat reveal"><span class="stat-num">35</span><span class="stat-label"><span data-fr>Succès à débloquer</span><span data-en>Achievements</span></span></div>
-      <div class="stat reveal"><span class="stat-num">∞</span><span class="stat-label"><span data-fr>Grilles générées</span><span data-en>Generated puzzles</span></span></div>
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow" data-en>Native iOS · iPhone &amp; iPad</span>
+    <span class="eyebrow" data-fr>Natif iOS · iPhone &amp; iPad</span>
+    <h1 data-en>Six modes. Logic, refined.</h1>
+    <h1 data-fr>Six modes. La logique, sublimée.</h1>
+    <p class="lede" data-en>Race friends 1-on-1, climb the daily leaderboard, and sharpen your logic on a beautiful, calm grid — playable offline and synced across all your devices.</p>
+    <p class="lede" data-fr>Affrontez vos amis en 1v1, grimpez au classement quotidien et aiguisez votre logique sur une grille élégante et apaisante — jouable hors ligne, synchronisée sur tous vos appareils.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://apps.apple.com/fr/app/the-caribbean-sudoku/id6775691950" data-en>Download on the App Store</a>
+      <a class="btn btn-primary" href="https://apps.apple.com/fr/app/the-caribbean-sudoku/id6775691950" data-fr>Télécharger sur l'App Store</a>
+      <a class="btn btn-secondary" href="#modes" data-en>See the six modes</a>
+      <a class="btn btn-secondary" href="#modes" data-fr>Voir les six modes</a>
     </div>
   </div>
+</section>
 
-  <!-- MODES -->
-  <section class="block" id="modes">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <p class="section-eyebrow"><span data-fr>Modes de jeu</span><span data-en>Game modes</span></p>
-        <h2 class="section-title"><span data-fr>Une grille,<br>six façons de penser.</span><span data-en>One grid,<br>six ways to think.</span></h2>
-        <p class="section-lead"><span data-fr>Chaque grille a une solution unique — calibrée par un vrai moteur d'évaluation de difficulté, jamais par un retrait de chiffres au hasard.</span><span data-en>Every puzzle has exactly one solution — tuned by a real difficulty-rating engine, never by random clue removal.</span></p>
+<section class="gallery">
+  <div class="wrap">
+    <div class="gallery-scroll" aria-label="App screenshots">
+      <img class="lang-img" data-src-en="assets/screenshots/en/01-home.png" data-src-fr="assets/screenshots/fr/01-accueil.png" alt="Home screen">
+      <img class="lang-img" data-src-en="assets/screenshots/en/02-classic.png" data-src-fr="assets/screenshots/fr/02-classique.png" alt="Classic mode">
+      <img class="lang-img" data-src-en="assets/screenshots/en/04-killer.png" data-src-fr="assets/screenshots/fr/04-killer.png" alt="Killer mode">
+      <img class="lang-img" data-src-en="assets/screenshots/en/06-hexadecimal.png" data-src-fr="assets/screenshots/fr/06-hexadecimal.png" alt="Hexadecimal mode">
+      <img class="lang-img" data-src-en="assets/screenshots/en/05-honeycomb.png" data-src-fr="assets/screenshots/fr/05-nid-abeille.png" alt="Honeycomb mode">
+      <img class="lang-img" data-src-en="assets/screenshots/en/03-hint.png" data-src-fr="assets/screenshots/fr/03-indice.png" alt="Smart hint">
+      <img class="lang-img" data-src-en="assets/screenshots/en/07-techniques.png" data-src-fr="assets/screenshots/fr/07-techniques.png" alt="Techniques">
+    </div>
+  </div>
+</section>
+
+<section id="modes" class="alt">
+  <div class="wrap">
+    <h2 data-en>Six ways to play</h2>
+    <h2 data-fr>Six façons de jouer</h2>
+    <p class="section-lede" data-en>Every puzzle is generated by a real difficulty-rating engine — never random clue removal — and always has exactly one solution.</p>
+    <p class="section-lede" data-fr>Chaque grille est générée par un véritable moteur d'évaluation de difficulté — jamais un retrait de chiffres au hasard — et possède toujours une solution unique.</p>
+    <div class="grid">
+      <div class="card">
+        <span class="glyph">▦</span>
+        <h3 data-en>Classic</h3><h3 data-fr>Classique</h3>
+        <p data-en>Sudoku as it should be, at your own pace.</p>
+        <p data-fr>Le sudoku tel qu'il doit être, à votre rythme.</p>
       </div>
-
-      <div class="modes-grid reveal">
-        <div class="mode-card">
-          <div class="mode-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></div>
-          <div class="mode-name">Classic</div>
-          <p class="mode-desc"><span data-fr>Le sudoku tel qu'il doit être, à votre rythme. Pour entrer dans la zone.</span><span data-en>Sudoku as it should be, at your own pace. The pure way in.</span></p>
-        </div>
-        <div class="mode-card">
-          <div class="mode-ico"><svg viewBox="0 0 24 24"><path d="M3 7h7l2 3M3 7v10h18V10h-9M3 7l2-3h5l2 3"/></svg></div>
-          <div class="mode-name">Killer</div>
-          <p class="mode-desc"><span data-fr>Pas un seul chiffre donné. Uniquement des cages et leurs sommes. Pour les plus malins.</span><span data-en>No givens at all. Only cages and their sums. For the cunning.</span></p>
-        </div>
-        <div class="mode-card">
-          <div class="mode-ico"><svg viewBox="0 0 24 24"><path d="M5 4h14M5 20h14M7 4l4 8-4 8M17 4l-4 8 4 8"/></svg></div>
-          <div class="mode-name"><span data-fr>Hexadécimal</span><span data-en>Hexadecimal</span></div>
-          <p class="mode-desc"><span data-fr>Une grille 16×16 avec les chiffres de 0 à F. Le défi logique ultime.</span><span data-en>A 16×16 grid with digits 0 to F. The ultimate logic challenge.</span></p>
-        </div>
-        <div class="mode-card">
-          <div class="mode-ico"><svg viewBox="0 0 24 24"><path d="M12 2l8 4.5v9L12 20l-8-4.5v-9L12 2z"/></svg></div>
-          <div class="mode-name"><span data-fr>Nid d'abeille</span><span data-en>Honeycomb</span></div>
-          <p class="mode-desc"><span data-fr>Une grille hexagonale à trois axes d'unicité. De la logique pure et élégante.</span><span data-en>A hexagonal grid with three axes of uniqueness. Pure, beautiful logic.</span></p>
-        </div>
-        <div class="mode-card">
-          <div class="mode-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 13V9M12 1h0M9 1h6"/></svg></div>
-          <div class="mode-name"><span data-fr>Contre la montre</span><span data-en>Time Attack</span></div>
-          <p class="mode-desc"><span data-fr>Terminez la grille avant la fin du chrono. Chaque seconde compte.</span><span data-en>Solve the grid before the clock runs out. Every second counts.</span></p>
-        </div>
-        <div class="mode-card">
-          <div class="mode-ico"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.3-9.3-9.2C1 8.5 2.7 5 6 5c2 0 3.2 1.2 4 2.5C10.8 6.2 12 5 14 5c3.3 0 5 3.5 3.3 6.8C19 16.7 12 21 12 21z"/></svg></div>
-          <div class="mode-name"><span data-fr>Survie</span><span data-en>Survival</span></div>
-          <p class="mode-desc"><span data-fr>Chaque bon chiffre recharge votre temps. Ne le laissez jamais atteindre zéro.</span><span data-en>Every correct digit refills your timer. Don't let it hit zero.</span></p>
-        </div>
+      <div class="card">
+        <span class="glyph">✂︎</span>
+        <h3 data-en>Killer</h3><h3 data-fr>Killer</h3>
+        <p data-en>No givens at all. Only cages and their sums. For the cunning.</p>
+        <p data-fr>Pas un seul chiffre donné. Uniquement des cages et leurs sommes.</p>
+      </div>
+      <div class="card">
+        <span class="glyph">16</span>
+        <h3 data-en>Hexadecimal</h3><h3 data-fr>Hexadécimal</h3>
+        <p data-en>A 16×16 grid with digits 0 to F. The ultimate logic challenge.</p>
+        <p data-fr>Une grille 16×16 avec les chiffres de 0 à F. Le défi ultime.</p>
+      </div>
+      <div class="card">
+        <span class="glyph">⬡</span>
+        <h3 data-en>Honeycomb</h3><h3 data-fr>Nid d'abeille</h3>
+        <p data-en>A hexagonal grid with three axes of uniqueness. Pure, beautiful logic.</p>
+        <p data-fr>Une grille hexagonale à trois axes d'unicité. De la logique pure.</p>
+      </div>
+      <div class="card">
+        <span class="glyph">⏱</span>
+        <h3 data-en>Time Attack</h3><h3 data-fr>Contre la montre</h3>
+        <p data-en>Solve the grid before the clock runs out.</p>
+        <p data-fr>Terminez la grille avant la fin du chrono.</p>
+      </div>
+      <div class="card">
+        <span class="glyph">♥</span>
+        <h3 data-en>Survival</h3><h3 data-fr>Survie</h3>
+        <p data-en>Every correct digit refills your timer. Don't let it hit zero.</p>
+        <p data-fr>Chaque bon chiffre recharge votre temps. Ne le laissez jamais atteindre zéro.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- DUEL + DAILY -->
-  <section class="block" style="padding-top:0;">
-    <div class="wrap">
-      <div class="split">
-        <div class="panel accent reveal">
-          <p class="panel-eyebrow" style="color:rgba(255,255,255,0.78);"><span data-fr>Multijoueur</span><span data-en>Multiplayer</span></p>
-          <h3 class="panel-title"><span data-fr>Affrontez un ami,<br>en 1 contre 1.</span><span data-en>Duel a friend,<br>1-on-1.</span></h3>
-          <p class="panel-body"><span data-fr>Course en tête-à-tête sur exactement la même grille. En ligne via Game Center ou en local par Wi-Fi/Bluetooth — sans connexion internet. Grimpez au classement Elo et prouvez qui est le plus rapide.</span><span data-en>Race head-to-head on the exact same grid. Online via Game Center or locally over Wi-Fi/Bluetooth — no internet required. Climb the Elo ladder and prove who's faster.</span></p>
-        </div>
-        <div class="panel reveal">
-          <p class="panel-eyebrow"><span data-fr>Chaque jour</span><span data-en>Every day</span></p>
-          <h3 class="panel-title"><span data-fr>Le défi quotidien<br>vous attend.</span><span data-en>The daily challenge<br>awaits.</span></h3>
-          <p class="panel-body"><span data-fr>Une nouvelle grille chaque jour, la même pour tous. Mesurez-vous au classement mondial Game Center et faites grandir votre série.</span><span data-en>A fresh puzzle every day, the same for everyone. Compete on the global Game Center leaderboard and build your solving streak.</span></p>
-        </div>
+<section id="features">
+  <div class="wrap">
+    <h2 data-en>Duel a friend, daily challenge, and more</h2>
+    <h2 data-fr>Duel entre amis, défi quotidien, et plus encore</h2>
+    <p class="section-lede" data-en>Built to help you actually get better, not just fill in numbers.</p>
+    <p class="section-lede" data-fr>Conçu pour vous faire vraiment progresser, pas seulement remplir des cases.</p>
+    <div class="feature-list">
+      <div class="feature">
+        <h3 data-en>1-on-1 multiplayer</h3><h3 data-fr>Multijoueur 1v1</h3>
+        <p data-en>Race head-to-head on the exact same grid, online via Game Center or locally over Wi-Fi/Bluetooth. Climb the Elo ladder.</p>
+        <p data-fr>Course en tête-à-tête sur la même grille, en ligne via Game Center ou en local Wi-Fi/Bluetooth. Grimpez au classement Elo.</p>
+      </div>
+      <div class="feature">
+        <h3 data-en>Daily challenge</h3><h3 data-fr>Défi quotidien</h3>
+        <p data-en>A fresh puzzle every day, the same for everyone. Compete on the Game Center leaderboard.</p>
+        <p data-fr>Une nouvelle grille chaque jour, la même pour tous. Mesurez-vous au classement Game Center.</p>
+      </div>
+      <div class="feature">
+        <h3 data-en>Smart hints</h3><h3 data-fr>Indices intelligents</h3>
+        <p data-en>Hints that teach you the technique behind the move, not just the answer.</p>
+        <p data-fr>Des indices qui enseignent la technique derrière chaque coup, pas juste la réponse.</p>
+      </div>
+      <div class="feature">
+        <h3 data-en>35 achievements</h3><h3 data-fr>35 succès</h3>
+        <p data-en>Full statistics: win rate, best times, solving heatmap and trends.</p>
+        <p data-fr>Statistiques complètes : taux de victoire, meilleurs temps, carte de régularité et tendances.</p>
+      </div>
+      <div class="feature">
+        <h3 data-en>iCloud sync</h3><h3 data-fr>Synchro iCloud</h3>
+        <p data-en>Progress, stats and streaks stay in sync across iPhone and iPad — in your own private iCloud.</p>
+        <p data-fr>Progression, stats et séries synchronisées entre iPhone et iPad — dans votre iCloud privé.</p>
+      </div>
+      <div class="feature">
+        <h3 data-en>Print to PDF</h3><h3 data-fr>Impression PDF</h3>
+        <p data-en>Print any puzzle with a recovery code to resume it later on your device.</p>
+        <p data-fr>Imprimez n'importe quelle grille avec un code de récupération pour la reprendre plus tard.</p>
+      </div>
+      <div class="feature">
+        <h3 data-en>Three themes</h3><h3 data-fr>Trois thèmes</h3>
+        <p data-en>Paper, Ink and Sepia — refined haptics and sound you can turn off anytime.</p>
+        <p data-fr>Papier, Encre et Sépia — vibrations et sons raffinés, désactivables à tout moment.</p>
+      </div>
+      <div class="feature">
+        <h3 data-en>Plays fully offline</h3><h3 data-fr>Fonctionne hors ligne</h3>
+        <p data-en>No account required. The grid itself never needs a connection.</p>
+        <p data-fr>Aucun compte requis. La grille se joue entièrement sans connexion.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- FEATURES -->
-  <section class="block" id="features" style="background:var(--surface); border-top:1px solid var(--border-soft); border-bottom:1px solid var(--border-soft);">
-    <div class="wrap">
-      <div class="section-head center reveal">
-        <p class="section-eyebrow"><span data-fr>Conçu pour progresser</span><span data-en>Built to master the game</span></p>
-        <h2 class="section-title"><span data-fr>Tout ce qu'il faut,<br>rien de superflu.</span><span data-en>Everything you need,<br>nothing you don't.</span></h2>
+<section id="pricing" class="alt">
+  <div class="wrap">
+    <h2 data-en>Free to play, fair by design</h2>
+    <h2 data-fr>Gratuit, et réglo</h2>
+    <p class="section-lede" data-en>The free version is supported by ads — one at the end of a game, never mid-puzzle. Remove them whenever you like.</p>
+    <p class="section-lede" data-fr>La version gratuite est financée par la publicité — une seule en fin de partie, jamais au milieu d'une grille. Retirez-les quand vous voulez.</p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3 data-en>Free</h3><h3 data-fr>Gratuit</h3>
+        <div class="amount" data-en>€0</div>
+        <div class="amount" data-fr>0 €</div>
+        <ul>
+          <li data-en>All six game modes</li><li data-fr>Les six modes de jeu</li>
+          <li data-en>Multiplayer duels &amp; daily challenge</li><li data-fr>Duels 1v1 et défi quotidien</li>
+          <li data-en>One ad at the end of a game</li><li data-fr>Une pub en fin de partie</li>
+          <li data-en>Watch an ad for an extra hint or undo</li><li data-fr>Une pub pour un indice ou retour en plus</li>
+        </ul>
       </div>
-      <div class="features-grid reveal">
-        <div class="feature">
-          <div class="feature-ico"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.2V16h6v-.3c0-.8.4-1.6 1-2.2A6 6 0 0 0 12 3z"/></svg></div>
-          <div class="feature-name"><span data-fr>Indices intelligents</span><span data-en>Smart hints</span></div>
-          <p class="feature-desc"><span data-fr>Des indices qui vous enseignent la technique derrière chaque coup, pas seulement la réponse.</span><span data-en>Hints that teach you the technique behind the move, not just the answer.</span></p>
-        </div>
-        <div class="feature">
-          <div class="feature-ico"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16M8 16v-4M12 16V8M16 16v-7"/></svg></div>
-          <div class="feature-name"><span data-fr>Statistiques complètes</span><span data-en>Full statistics</span></div>
-          <p class="feature-desc"><span data-fr>Taux de victoire, meilleurs temps, carte de régularité et tendances.</span><span data-en>Win rate, best times, a solving heatmap and trends.</span></p>
-        </div>
-        <div class="feature">
-          <div class="feature-ico"><svg viewBox="0 0 24 24"><path d="M18 10c0-4-3-7-6-7s-6 3-6 7c0 2-.6 3.3-1.3 4.2-.4.5 0 1.3.6 1.3h13.4c.6 0 1-.8.6-1.3C18.6 13.3 18 12 18 10z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg></div>
-          <div class="feature-name"><span data-fr>35 succès</span><span data-en>35 achievements</span></div>
-          <p class="feature-desc"><span data-fr>Des objectifs à débloquer qui récompensent la régularité comme la virtuosité.</span><span data-en>Goals to chase that reward consistency as much as brilliance.</span></p>
-        </div>
-        <div class="feature">
-          <div class="feature-ico"><svg viewBox="0 0 24 24"><path d="M18 10h1a4 4 0 0 1 0 8H6a5 5 0 0 1-1-9.9A6 6 0 0 1 17 8M12 18v-7M9 14l3-3 3 3"/></svg></div>
-          <div class="feature-name"><span data-fr>Synchro iCloud</span><span data-en>iCloud sync</span></div>
-          <p class="feature-desc"><span data-fr>Progression, stats et séries conservées entre iPhone et iPad, en privé.</span><span data-en>Progress, stats and streaks kept in sync across iPhone and iPad, privately.</span></p>
-        </div>
-        <div class="feature">
-          <div class="feature-ico"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg></div>
-          <div class="feature-name"><span data-fr>Impression PDF</span><span data-en>Print to PDF</span></div>
-          <p class="feature-desc"><span data-fr>Imprimez n'importe quelle grille — avec un code pour la reprendre plus tard.</span><span data-en>Print any puzzle — with a recovery code to resume it later on your device.</span></p>
-        </div>
-        <div class="feature">
-          <div class="feature-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z"/></svg></div>
-          <div class="feature-name"><span data-fr>Trois thèmes élégants</span><span data-en>Three elegant themes</span></div>
-          <p class="feature-desc"><span data-fr>Papier, Encre et Sépia. Vibrations et sons raffinés, désactivables à tout moment.</span><span data-en>Paper, Ink and Sepia. Refined haptics and sound you can turn off anytime.</span></p>
-        </div>
+      <div class="price-card highlight">
+        <span class="tag" data-en>One-time</span><span class="tag" data-fr>Achat unique</span>
+        <h3 data-en>Premium</h3><h3 data-fr>Premium</h3>
+        <div class="amount" data-en>from €4.99 <small>one-time</small></div>
+        <div class="amount" data-fr>à partir de 4,99 € <small>achat unique</small></div>
+        <ul>
+          <li data-en>Zero ads, forever</li><li data-fr>Zéro publicité, pour toujours</li>
+          <li data-en>Unlimited hints</li><li data-fr>Indices illimités</li>
+          <li data-en>Unlimited undos</li><li data-fr>Annulations illimitées</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <h3 data-en>Help packs</h3><h3 data-fr>Packs d'aide</h3>
+        <div class="amount" data-en>from €0.99</div>
+        <div class="amount" data-fr>à partir de 0,99 €</div>
+        <ul>
+          <li data-en>10 hints, or 10 undos</li><li data-fr>10 indices, ou 10 retours</li>
+          <li data-en>Mixed pack: 15 + 15</li><li data-fr>Pack mixte : 15 + 15</li>
+          <li data-en>Optional, never required</li><li data-fr>Facultatif, jamais obligatoire</li>
+        </ul>
       </div>
     </div>
-  </section>
+    <p class="price-note" data-en>Prices shown are indicative and set by Apple per storefront, currency and local tax — the exact price always appears in the App Store before you buy.</p>
+    <p class="price-note" data-fr>Les prix affichés sont indicatifs et fixés par Apple selon le pays, la devise et la fiscalité locale — le prix exact apparaît toujours dans l'App Store avant l'achat.</p>
+  </div>
+</section>
 
-  <!-- PRICING -->
-  <section class="block" id="pricing">
-    <div class="wrap">
-      <div class="section-head center reveal">
-        <p class="section-eyebrow"><span data-fr>Tarif</span><span data-en>Pricing</span></p>
-        <h2 class="section-title"><span data-fr>Tout débloqué.<br>Une seule fois.</span><span data-en>Fully unlocked.<br>Pay once.</span></h2>
+<section class="privacy-band">
+  <div class="wrap">
+    <div class="badge">
+      <span data-en>🔒 No account required · we run no servers · nothing collected by us</span>
+      <span data-fr>🔒 Aucun compte requis · aucun serveur · rien collecté par nous</span>
+    </div>
+    <p>
+      <a href="privacy.en.html" data-en>Read the full Privacy Policy →</a>
+      <a href="privacy.fr.html" data-fr>Lire la politique de confidentialité complète →</a>
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4 data-en>App</h4><h4 data-fr>App</h4>
+        <a href="#modes" data-en>Modes</a><a href="#modes" data-fr>Modes</a>
+        <a href="#pricing" data-en>Pricing</a><a href="#pricing" data-fr>Tarifs</a>
+        <a href="https://apps.apple.com/fr/app/the-caribbean-sudoku/id6775691950" data-en>App Store</a>
+        <a href="https://apps.apple.com/fr/app/the-caribbean-sudoku/id6775691950" data-fr>App Store</a>
       </div>
-      <div class="price-wrap reveal">
-        <div class="price-card">
-          <p class="price-badge"><span data-fr>Achat unique · sans abonnement</span><span data-en>One-time purchase · no subscription</span></p>
-          <div class="price-amount"><span data-fr>3,99 €</span><span data-en>$3.99</span></div>
-          <p class="price-sub"><span data-fr>Aucun achat intégré, jamais</span><span data-en>No in-app purchases, ever</span></p>
-          <ul class="price-list">
-            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span><span data-fr>Les six modes de jeu, sans restriction</span><span data-en>All six game modes, unrestricted</span></span></li>
-            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span><span data-fr>Duels 1v1 et défi quotidien classé</span><span data-en>1-on-1 duels and the ranked daily challenge</span></span></li>
-            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span><span data-fr>Synchro iCloud, statistiques et 35 succès</span><span data-en>iCloud sync, full statistics and 35 achievements</span></span></li>
-            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span><span data-fr>Mises à jour futures incluses</span><span data-en>Future updates included</span></span></li>
-            <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span><span data-fr>Aucune publicité, aucun pistage</span><span data-en>No ads, no tracking</span></span></li>
-          </ul>
-          <a class="btn btn-primary btn-lg" href="#" style="width:100%; justify-content:center;">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.5 1.6c.1 1.2-.4 2.4-1.1 3.3-.8.9-2 1.6-3.2 1.5-.1-1.2.4-2.4 1.1-3.2.8-.9 2-1.5 3.2-1.6zM20 17c-.5 1.2-.8 1.7-1.5 2.7-1 1.5-2.4 3.3-4.1 3.3-1.5 0-1.9-1-4-1-2 0-2.5 1-4 1-1.7 0-3-1.7-4-3.1C-.4 16.7-.7 11.4 1.6 8.6 2.8 7.2 4.4 6.3 6.1 6.3c1.7 0 2.8 1 4.2 1 1.4 0 2.2-1 4.2-1 1.5 0 3.1.8 4.2 2.2-3.7 2-3.1 7.3.3 8.5z"/></svg>
-            <span data-fr>Télécharger sur l'App Store</span><span data-en>Download on the App Store</span>
-          </a>
-        </div>
+      <div class="footer-col">
+        <h4 data-en>Legal</h4><h4 data-fr>Légal</h4>
+        <a href="privacy.en.html" data-en>Privacy Policy</a><a href="privacy.fr.html" data-fr>Politique de confidentialité</a>
+        <a href="terms.en.html" data-en>Terms of Use</a><a href="terms.fr.html" data-fr>Conditions d'utilisation</a>
+      </div>
+      <div class="footer-col">
+        <h4 data-en>Support</h4><h4 data-fr>Assistance</h4>
+        <a href="support.en.html" data-en>Help &amp; FAQ</a><a href="support.fr.html" data-fr>Aide &amp; FAQ</a>
+        <a href="mailto:contact@caribtechstudio.com">contact@caribtechstudio.com</a>
+      </div>
+      <div class="footer-col">
+        <h4 data-en>Studio</h4><h4 data-fr>Studio</h4>
+        <a href="https://caribtechstudio.github.io">Carib Tech Studio</a>
       </div>
     </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <a class="brand" href="#top">
-          <picture>
-            <source srcset="icon-dark.png" media="(prefers-color-scheme: dark)" />
-            <img class="brand-mark" src="icon.png" width="30" height="30" alt="" />
-          </picture>
-          <span class="brand-name">The Caribbean Sudoku</span>
-        </a>
-        <p class="footer-tagline"><span data-fr>Le Sudoku réinventé, fait avec soin sur iOS.</span><span data-en>Sudoku reimagined, crafted with care on iOS.</span></p>
-      </div>
-      <div class="footer-cols">
-        <div class="footer-col">
-          <h4><span data-fr>Produit</span><span data-en>Product</span></h4>
-          <a href="#modes"><span data-fr>Modes de jeu</span><span data-en>Game modes</span></a>
-          <a href="#features"><span data-fr>Fonctionnalités</span><span data-en>Features</span></a>
-          <a href="#pricing"><span data-fr>Prix</span><span data-en>Pricing</span></a>
-        </div>
-        <div class="footer-col">
-          <h4><span data-fr>Entreprise</span><span data-en>Company</span></h4>
-          <a href="privacy.html"><span data-fr>Confidentialité</span><span data-en>Privacy</span></a>
-          <a href="mailto:contact@caribtechstudio.com"><span data-fr>Assistance</span><span data-en>Support</span></a>
-          <a href="mailto:contact@caribtechstudio.com">Contact</a>
-        </div>
-      </div>
+    <div class="footer-bottom">
+      <span>© 2026 Carib Tech Studio</span>
+      <span data-en>Made with care for iPhone &amp; iPad.</span>
+      <span data-fr>Conçu avec soin pour iPhone &amp; iPad.</span>
     </div>
-    <div class="footer-base">
-      <div class="footer-base-inner">
-        <span>© 2026 Carib Tech Studio</span>
-        <span><span data-fr>Conçu et développé en SwiftUI.</span><span data-en>Designed and built in SwiftUI.</span></span>
-      </div>
-    </div>
-  </footer>
+  </div>
+</footer>
 
-  <script>
-    function setLang(lang) {
-      document.documentElement.setAttribute('data-lang', lang);
-      document.documentElement.setAttribute('lang', lang);
-      try { localStorage.setItem('sp-lang', lang); } catch (e) {}
-      var meta = document.querySelector('meta[name="description"]');
-      if (meta) meta.setAttribute('content', meta.getAttribute('data-meta-' + lang) || meta.content);
-    }
-    (function () {
-      var saved;
-      try { saved = localStorage.getItem('sp-lang'); } catch (e) {}
-      var lang = saved || ((navigator.language || 'fr').toLowerCase().startsWith('fr') ? 'fr' : 'en');
-      setLang(lang);
-    })();
+<script>
+(function () {
+  var STORAGE_KEY = 'ccs-lang';
+  function naturalDisplay(el) {
+    if (el.classList.contains('btn')) return 'inline-flex';
+    if (el.classList.contains('eyebrow')) return 'inline-block';
+    if (el.classList.contains('footer-col') || el.tagName === 'DIV') return 'block';
+    if (el.tagName === 'A' || el.tagName === 'SPAN') return 'inline';
+    return 'block';
+  }
+  function apply(lang) {
+    document.documentElement.lang = lang;
+    document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+    document.getElementById('lang-fr').classList.toggle('active', lang === 'fr');
+    document.querySelectorAll('[data-en]').forEach(function (el) {
+      el.style.display = lang === 'en' ? naturalDisplay(el) : 'none';
+    });
+    document.querySelectorAll('[data-fr]').forEach(function (el) {
+      el.style.display = lang === 'fr' ? naturalDisplay(el) : 'none';
+    });
+    document.querySelectorAll('.lang-img').forEach(function (img) {
+      var src = lang === 'fr' ? img.getAttribute('data-src-fr') : img.getAttribute('data-src-en');
+      if (img.getAttribute('src') !== src) img.setAttribute('src', src);
+    });
+  }
+  function detect() {
+    var saved = null;
+    try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+    if (saved === 'en' || saved === 'fr') return saved;
+    var nav = (navigator.language || 'en').toLowerCase();
+    return nav.indexOf('fr') === 0 ? 'fr' : 'en';
+  }
+  document.querySelectorAll('[data-set-lang]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var lang = btn.getAttribute('data-set-lang');
+      try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+      apply(lang);
+    });
+  });
+  apply(detect());
+})();
+</script>
 
-    // Scroll reveal
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
-  </script>
 </body>
 </html>
